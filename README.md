@@ -4,10 +4,13 @@ A VA disability claim planner for service members getting ready to separate. It'
 
 It covers:
 
+- **Guided intake:** plain symptom questions, one body area at a time. Your answers build your claim list, a target for each condition, and the evidence you still need.
+- **Claim at a glance:** your combined target, what your evidence supports today, the next moves that close the gap, and conditions worth checking with a doctor.
 - **Rating math:** the VA combined-rating calculation, including the bilateral factor.
 - **Deadlines:** the BDD and effective-date clock, counted from your separation date.
 - **Evidence:** per-condition checklists and what the C&P examiner measures.
 - **Exam prep:** C&P exam rules and a cheat sheet built from your own notes.
+- **Learn:** VA math with your own numbers, the five ways to service-connect, honest ways ratings go higher, deadlines and back pay, what each rating unlocks, key forms, a glossary, and red flags.
 - **GrokBot:** pick a mission, or type your own, and either send it to Grok in one click or run it live with your own xAI API key. Grok's plays, statement drafts, and exam questions are filed into the playbook.
 
 Everything you enter stays in your own browser's local storage. Nothing is sent anywhere unless you send it to Grok. In live mode, your key stays in your browser and goes only to api.x.ai, and each run sends your case file (no name) to xAI.

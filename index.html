@@ -244,6 +244,49 @@ table.report{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
 .history div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--rule);padding:6px 0}
 .code{font-family:var(--mono);font-size:12px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px;overflow-x:auto;white-space:pre;margin:0}
 
+/* start: intake */
+.ix-prog{display:flex;align-items:center;gap:12px}
+.ix-prog i{flex:1;height:6px;background:var(--rule);border-radius:3px;overflow:hidden}
+.ix-prog i b{display:block;height:100%;background:var(--signal)}
+.ix-hero h2{font-family:var(--display);font-weight:400;font-size:clamp(26px,4vw,34px);line-height:1.05;margin-bottom:10px}
+.ix-hero p{max-width:66ch}
+.ix-points{margin:14px 0;padding-left:18px;display:flex;flex-direction:column;gap:8px;max-width:70ch}
+.ix-qs{display:flex;flex-direction:column;gap:10px}
+.ix-q{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px}
+.ix-q.yes{border-color:var(--od)}
+.ix-qrow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.ix-text{font-size:15.5px;line-height:1.45;max-width:64ch;flex:1 1 300px}
+.ix-yn button{padding:7px 12px;font-size:11.5px}
+.ix-more{display:flex;flex-direction:column;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--rule)}
+.tier.opt{grid-template-columns:minmax(0,1fr)}
+.ix-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;bottom:0;background:var(--paper);padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--rule);z-index:2}
+.ix-list{display:flex;flex-direction:column}
+.ix-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--rule);align-items:center}
+.ix-row:last-child{border-bottom:0}
+.ix-row .nm{font-weight:600}
+.ix-row .pct{font-family:var(--display);font-size:24px;line-height:1;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chk{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(--od-soft);color:var(--od)}
+.chk.miss{background:var(--signal-soft);color:var(--signal)}
+.moves{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:10px;font-size:14.5px}
+.moves .gap{font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
+.ix-big{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:flex-end}
+/* learn */
+.learn{display:flex;flex-direction:column;gap:10px}
+.learn details{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r)}
+.learn summary{cursor:pointer;padding:14px 16px;font-weight:600;font-size:16px;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.learn summary::-webkit-details-marker{display:none}
+.learn summary::after{content:"+";font-family:var(--mono);color:var(--ink-2);flex:none}
+.learn details[open] summary::after{content:"–"}
+.learn summary small{display:block;font-weight:400;font-size:13px;color:var(--ink-2);margin-top:2px}
+.lbody{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;font-size:14.5px;max-width:80ch}
+.lbody ul,.lbody ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.lbody h4{margin:6px 0 0;font-size:14px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);font-weight:500}
+.kv{display:grid;grid-template-columns:minmax(110px,auto) minmax(0,1fr);gap:6px 14px;font-size:14px}
+.kv dt{font-family:var(--mono);font-size:12.5px;color:var(--od);font-weight:600;padding-top:1px}
+.kv dd{margin:0}
+@media (max-width:560px){ .kv{grid-template-columns:minmax(0,1fr)} .kv dd{margin-bottom:6px} }
+
 footer{margin-top:40px;border-top:2px solid var(--ink);padding-top:14px;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;font-size:13px;color:var(--ink-2)}
 footer strong{color:var(--ink)}
 .crisis{border:1px solid var(--rule);border-radius:var(--r);padding:10px 12px;background:var(--sheet)}
@@ -296,11 +339,13 @@ footer strong{color:var(--ink)}
   <section class="readout" id="readout" aria-label="Rating readout"></section>
 
   <nav class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" data-act="tab" data-tab="start" id="tab-start">Start</button>
     <button class="tab" role="tab" data-act="tab" data-tab="plan" id="tab-plan">Game plan</button>
-    <button class="tab" role="tab" data-act="tab" data-tab="claims" id="tab-claims">Claims &amp; confidence</button>
+    <button class="tab" role="tab" data-act="tab" data-tab="claims" id="tab-claims">Claims</button>
     <button class="tab" role="tab" data-act="tab" data-tab="scout" id="tab-scout">Scout <span class="badge" id="scoutBadge" hidden></span></button>
     <button class="tab" role="tab" data-act="tab" data-tab="prep" id="tab-prep">C&amp;P exam prep</button>
     <button class="tab" role="tab" data-act="tab" data-tab="grok" id="tab-grok">GrokBot</button>
+    <button class="tab" role="tab" data-act="tab" data-tab="learn" id="tab-learn">Learn</button>
   </nav>
 
   <main id="view" role="tabpanel"></main>
@@ -407,7 +452,7 @@ const LIB = [
  avoid:[],note:"Often secondary to an altered gait from a knee or back condition.",sec:["back"]},
 {id:"shoulder",name:"Shoulder",sys:"Joints",dc:"DC 5201",cfr:"38 CFR 4.71a",pres:null,limb:"arm",
  measures:"How high you can raise the arm (flexion and abduction), pain on motion, flare-ups. Dominant arm rates higher.",
- tiers:[[10,"Painful motion."],[20,"Can't raise the arm above shoulder level."],[30,"Dominant arm: can't raise it past midway between side and shoulder (~45°)."],[40,"Dominant arm: limited to 25° from your side."]],
+ tiers:[[10,"Painful motion."],[20,"Can't raise the arm above shoulder level. Non-dominant arm: also 20% when limited to midway (~45°)."],[30,"Dominant arm: can't raise it past midway between side and shoulder (~45°). Non-dominant arm: limited to 25° from your side."],[40,"Dominant arm: limited to 25° from your side."]],
  evidence:["STR visits, PT, or imaging","Ruck, plate carrier, or weapons-carry injury notes"],
  say:["I can raise my arm to about ___ before pain starts.","I can't reach overhead to ___."],
  avoid:["Raising the arm past the point of pain"],
@@ -492,7 +537,7 @@ const LIB = [
  note:"Presumptive as a functional GI disorder for Southwest Asia and Afghanistan service. Also claimed secondary to PTSD.",sec:[]},
 {id:"htn",name:"Hypertension",sys:"Cardiovascular",dc:"DC 7101",cfr:"38 CFR 4.104",pres:null,
  measures:"Blood pressure readings over time and whether you need continuous medication.",
- tiers:[[10,"Diastolic mostly 100+ or systolic mostly 160+, or history of diastolic 100+ needing continuous medication."],[20,"Diastolic mostly 110+ or systolic mostly 200+."],[40,"Diastolic mostly 120+."],[60,"Diastolic mostly 130+."]],
+ tiers:[[0,"Elevated readings below the 10% level, without continuous medication."],[10,"Diastolic mostly 100+ or systolic mostly 160+, or history of diastolic 100+ needing continuous medication."],[20,"Diastolic mostly 110+ or systolic mostly 200+."],[40,"Diastolic mostly 120+."],[60,"Diastolic mostly 130+."]],
  evidence:["Multiple high readings documented in service","Medication prescription"],
  say:["I take ___ for blood pressure since ___."],avoid:[],
  note:"Not presumptive for burn pits. Can be claimed secondary to sleep apnea or PTSD with a medical opinion.",sec:[]},
@@ -510,13 +555,32 @@ const LIB = [
  note:"Surgical scars from in-service surgeries count. VA proposed changes to painful scar rules in Sep 2025.",sec:[]},
 {id:"carpal",name:"Carpal tunnel / median nerve",sys:"Nerves",dc:"DC 8515",cfr:"38 CFR 4.124a",pres:null,limb:"arm",
  measures:"Sensation, grip strength, muscle atrophy, nerve conduction. Dominant hand rates higher.",
- tiers:[[10,"Mild incomplete paralysis."],[30,"Dominant hand: moderate incomplete paralysis (20% non-dominant)."],[50,"Dominant hand: severe incomplete paralysis (40% non-dominant)."],[70,"Dominant hand: complete paralysis (60% non-dominant)."]],
+ tiers:[[10,"Mild incomplete paralysis."],[20,"Non-dominant hand: moderate incomplete paralysis."],[30,"Dominant hand: moderate incomplete paralysis."],[40,"Non-dominant hand: severe incomplete paralysis."],[50,"Dominant hand: severe incomplete paralysis."],[60,"Non-dominant hand: complete paralysis."],[70,"Dominant hand: complete paralysis."]],
  evidence:["Nerve conduction study","STR visits"],say:["I drop things about ___ times a week.","My hand goes numb when ___."],avoid:[],note:"",sec:[]},
 {id:"fibro",name:"Fibromyalgia",sys:"Musculoskeletal",dc:"DC 5025",cfr:"38 CFR 4.71a",pres:"gulf",
  measures:"Widespread pain and how constant it is despite treatment.",
  tiers:[[10,"Needs continuous medication."],[20,"Episodic, flares often triggered by stress or illness, present more than a third of the time."],[40,"Constant or nearly constant, not helped by treatment."]],
  evidence:["Diagnosis","Southwest Asia service (Gulf War presumptive)"],say:["I hurt in ___ most days; flares last ___."],avoid:[],
  note:"Gulf War presumptive as a medically unexplained chronic multisymptom illness.",sec:[]},
+{id:"cfs",name:"Chronic fatigue syndrome",sys:"Musculoskeletal",dc:"DC 6354",cfr:"38 CFR 4.88b",pres:"gulf",
+ measures:"How much debilitating fatigue and trouble thinking cut your routine daily activity compared with before, or how many weeks a year a doctor had you on bed rest.",
+ tiers:[[10,"Symptoms controlled by continuous medication, or 1 to 2 weeks a year of incapacitation."],[20,"Nearly constant symptoms that cut daily activity by less than 25%, or 2 to 4 weeks a year of incapacitation."],[40,"Nearly constant symptoms that cut daily activity to 50–75% of before, or 4 to 6 weeks a year of incapacitation."],[60,"Nearly constant symptoms that cut daily activity to less than 50% of before, or 6+ weeks a year of incapacitation."],[100,"So severe that routine daily activity is almost completely restricted, sometimes including self-care."]],
+ evidence:["Diagnosis (CFS has specific criteria: ask for the full workup)","A log of the days you were down and what you couldn't do","Southwest Asia service (Gulf War presumptive)"],
+ say:["Before service I could ___. Now on a typical day I can ___.","In the last year a doctor had me on bed rest for about ___ weeks."],
+ avoid:["Calling it \"just being tired\""],
+ note:"Gulf War presumptive as a medically unexplained chronic multisymptom illness. \"Incapacitation\" means a doctor prescribed bed rest and treatment.",sec:["ptsd"]},
+{id:"eczema",name:"Eczema / dermatitis",sys:"Skin",dc:"DC 7806",cfr:"38 CFR 4.118",pres:null,
+ measures:"What percent of your whole body, and of exposed skin (face, neck, hands), is affected, and what treatment you needed in the last 12 months.",
+ tiers:[[0,"Less than 5% of your body or exposed skin, and creams only."],[10,"5–20% of your body or exposed skin, or pills or shots (steroids, immunosuppressants) for less than 6 weeks total in the past year."],[30,"20–40% of your body or exposed skin, or pills or shots for 6+ weeks total in the past year."],[60,"More than 40% of your body or exposed skin, or constant or near-constant pills or shots in the past year."]],
+ evidence:["Diagnosis and prescription history","Dated photos of flares (your palm is about 1% of your skin)","Records of oral or injected treatment"],
+ say:["During a flare it covers my ___, about ___ palm-sizes.","Flares happen ___ times a year and last ___."],
+ avoid:["Going to the exam on a clear day without flare photos"],
+ note:"Examiners rate what they see unless you show them the flares. Bring dated photos of your worst ones.",sec:[]},
+{id:"wrist",name:"Wrist",sys:"Joints",dc:"DC 5215",cfr:"38 CFR 4.71a",pres:null,limb:"arm",
+ measures:"How far you can bend the wrist back and forward, pain on motion, and flare-ups.",
+ tiers:[[10,"Bends back less than 15°, or forward bending limited to straight in line with the forearm, or painful motion."]],
+ evidence:["STR visits, splints, or imaging"],say:["Pushing up, typing, or gripping hurts after ___."],avoid:["Forcing the wrist past where pain starts"],
+ note:"10% is the top rating for limited wrist motion. A fused (ankylosed) wrist rates higher.",sec:["carpal"]},
 {id:"cancer",name:"PACT Act cancer",sys:"Cancer",dc:"DC 6819 and others",cfr:"38 CFR 3.320",pres:"pact",
  measures:"Active treatment, then residuals after treatment ends.",
  tiers:[[100,"100% during active treatment and for 6 months after, then rated on what remains."]],
@@ -550,6 +614,9 @@ const PLAYS = [
 {id:"toxic",phase:"file",impact:"high",due:-90,title:"Claim your toxic exposures (PACT Act)",
  why:"For covered locations, VA presumes certain conditions came from service. You skip the hardest part of proving the link.",
  steps:["Fill out the toxic exposure section of the 21-526EZ: list every location and hazard.","Get the free VA toxic exposure screening.","Claim presumptive conditions you actually have: sinusitis, rhinitis, asthma, and others."],forms:["VA 21-526EZ section"]},
+{id:"itf",phase:"file",impact:"high",due:null,title:"Not filing yet? Lock your date with an Intent to File",
+ why:"An Intent to File holds your effective date for a year while you gather evidence, so back pay counts from the day you filed the intent instead of the day you finish.",
+ steps:["Inside 1 year of discharge you already keep the day-after-discharge date, so this matters most after that, or for increases and new conditions later.","File it online at VA.gov, by phone (800-827-1000), or on VA Form 21-0966. A VSO can file it for you.","Submit the full claim within 1 year of the intent."],forms:["VA 21-0966"]},
 {id:"statements",phase:"file",impact:"medium",due:-90,title:"Write a personal statement for each condition",
  why:"Your words fill in what the records miss: how it started, how it's gone since, and what it costs you now.",
  steps:["When and how it started in service.","What it has been like since: frequency, treatment.","How it affects work and home today, including worst days and flare-ups.","Keep it true and specific. Dates and numbers beat adjectives."],forms:["VA 21-4138","VA 21-10210"]},
@@ -581,6 +648,92 @@ const PLAYS = [
  steps:["CRDP is automatic at 50%+. Check DFAS after your rating posts.","Apply for CRSC through your branch for combat-related conditions."],forms:["DD 2860"]},
 ];
 
+/* Intake: plain-language symptom questions, one body area per step. Severity options map to the rating tiers in LIB;
+   minor maps a dominant-arm tier to the non-dominant one. oneRating: one rating covers both sides. */
+const SCREEN = [
+{id:"mind", title:"Mind & sleep", intro:"Mental health and sleep problems are among the most common ratings after deployments, and the most under-reported.", items:[
+ {lib:"ptsd", q:"Since your deployments, do you deal with nightmares, anxiety, panic, depression, anger, poor sleep, or feeling on guard all the time?",
+  sevQ:"Which describes your typical month, honestly?", sev:[[10,"Mostly managed: it shows up under heavy stress, or medication keeps it in check"],[30,"Noticeable: low or anxious stretches, sleep problems, panic attacks weekly or less, some off days at work"],[50,"Hard: panic more than once a week, trouble with complex tasks, mood swings, strained work and family relationships"],[70,"Severe: struggling in most areas (work, family, mood, judgment), near-constant panic or depression, angry outbursts, or thoughts of suicide"],[100,"Total: can't work or manage daily life, or a danger to yourself or others"]],
+  tip:"PTSD, depression, anxiety, and insomnia all roll into one mental health rating. If you're having thoughts of suicide, call 988 and press 1."},
+ {lib:"osa", q:"Has anyone told you that you snore loudly or stop breathing in your sleep, or do you use a CPAP?",
+  sevQ:"Which fits?", sev:[[0,"Diagnosed or suspected, but I'm not sleepy during the day"],[30,"I'm tired and sleepy during the day even after a full night"],[50,"A doctor prescribed a CPAP or other breathing machine"]],
+  tip:"This needs a sleep study. Get one before you separate."},
+]},
+{id:"head", title:"Head & ears", intro:"Noise and blast exposure across deployments leave marks that are easy to shrug off.", items:[
+ {lib:"tinnitus", q:"Do you hear ringing, buzzing, or hissing in your ears that keeps coming back or never stops?", tip:"Your own report is the evidence for tinnitus."},
+ {lib:"hearing", q:"Do you have trouble following conversations, or keep asking people to repeat themselves?",
+  sevQ:"How much does it affect you?", sev:[[0,"A little: mostly in noisy places"],[10,"Moderate: trouble in most conversations"],[20,"Moderately severe: I miss a lot, even one-on-one"],[30,"Severe: I depend on lip-reading or hearing aids"]],
+  tip:"Hearing loss is rated from a sound-booth test, so this target is only a starting guess."},
+ {lib:"migraine", q:"Do you get headaches bad enough that you have to stop what you're doing and lie down?",
+  sevQ:"Over the last few months, how often?", sev:[[0,"Less than once every two months"],[10,"About once every two months"],[30,"About once a month"],[50,"Several times a month, they last a long time, and they cost me work"]]},
+ {lib:"tbi", q:"Were you exposed to blasts, IEDs, breaching, or artillery, or ever knocked out or dazed, and have you had memory, focus, dizziness, or light-sensitivity problems since?",
+  sevQ:"How much does it affect you?", sev:[[10,"Mild: some memory or focus slips, headaches"],[40,"Moderate: it clearly gets in the way of work or daily tasks"],[70,"Significant: I need reminders or help with complex tasks"]],
+  tip:"Your first VA TBI exam must be done by a specialist. Symptoms that overlap with PTSD are rated once."},
+]},
+{id:"spine", title:"Back & neck", intro:"Rucks, plates, helmets, and vehicle miles add up. Spine ratings come from how far you can move before pain stops you.", items:[
+ {lib:"back", q:"Do you have lower or mid-back pain, stiffness, spasms, or flare-ups?",
+  sevQ:"Bend forward at the waist without warming up. Where does pain stop you?", sev:[[10,"Near my toes, but it hurts, or my back spasms"],[20,"Around my knees or shins"],[40,"Barely past upright: a third of the way down or less"]],
+  tip:"Stop where pain starts, here and at the exam."},
+ {lib:"radic", limb:"leg", q:"Does pain, numbness, or tingling run from your back down into a leg?",
+  sevQ:"How bad is it?", sev:[[10,"Mild: tingling or numbness that comes and goes"],[20,"Moderate: regular pain or numbness, some weakness"],[40,"Moderately severe: constant symptoms and clear weakness"],[60,"Severe: muscle wasting, or the leg gives out"]],
+  tip:"Each leg is rated on its own. Both legs adds the bilateral factor."},
+ {lib:"neck", q:"Do you have neck pain or stiffness?",
+  sevQ:"Tuck your chin toward your chest. Where does pain stop you?", sev:[[10,"Almost to my chest, but it hurts"],[20,"About halfway"],[30,"I can barely tip my head forward"]]},
+]},
+{id:"joints", title:"Joints & hands", intro:"Each joint, and each side, is rated on its own. Matching left and right limbs earn the bilateral factor.", items:[
+ {lib:"knee", limb:"leg", q:"Do you have knee pain, swelling, locking, or a knee that gives out?",
+  sevQ:"Which fits best?", sev:[[10,"It hurts when I bend it, kneel, squat, or take stairs"],[20,"It locks up and swells (torn meniscus), or it gives out on me regularly"],[30,"It's so unstable I need a brace and a cane, or I can barely bend it"]],
+  tip:"Pain, instability, and meniscus problems can each be rated separately on the same knee."},
+ {lib:"hip", limb:"leg", q:"Do you have hip pain or stiffness?",
+  sevQ:"Which fits best?", sev:[[10,"It hurts when I move it, walk far, or climb into a vehicle"],[20,"I can only lift my thigh about a third of the normal way"],[30,"I can barely lift my thigh"]]},
+ {lib:"ankle", limb:"leg", q:"Do you have ankle pain, stiffness, or an ankle that rolls?",
+  sevQ:"Which fits best?", sev:[[10,"It hurts when I move it, or it rolls now and then"],[20,"It's very stiff: I can barely flex it up or down"]]},
+ {lib:"shoulder", limb:"arm", minor:{30:20,40:30}, q:"Do you have shoulder pain, or trouble raising your arm?",
+  sevQ:"Raise your arm out in front of you. Where does pain stop you?", sev:[[10,"Above my head, but it hurts"],[20,"Only to shoulder level"],[30,"Only about halfway to shoulder level"],[40,"Barely away from my side"]],
+  tip:"Your dominant arm is rated on a higher scale. Set your dominant hand on the service step."},
+ {lib:"wrist", limb:"arm", q:"Do you have wrist pain or stiffness?", tip:"Limited wrist motion tops out at 10%."},
+ {lib:"carpal", limb:"arm", minor:{30:20,50:40,70:60}, q:"Do you have numbness, tingling, or a weak grip in your hand?",
+  sevQ:"How bad is it?", sev:[[10,"Mild: it comes and goes"],[30,"Moderate: regular numbness, dropping things"],[50,"Severe: constant, with a weak grip or muscle loss"]]},
+]},
+{id:"feet", title:"Feet & skin", items:[
+ {lib:"plantar", limb:"leg", oneRating:true, q:"Do you have heel or arch pain, especially on your first steps in the morning?",
+  sevQ:"How has treatment gone?", sev:[[10,"Inserts, stretching, or shots help"],[20,"One foot, and nothing I've tried fixes it"],[30,"Both feet, and nothing I've tried fixes it"]]},
+ {lib:"flatfeet", q:"Do you have flat feet that hurt when you stand or walk?",
+  sevQ:"Which fits best?", sev:[[0,"Mild: inserts fix it"],[10,"Pain after standing or walking, even with inserts"],[30,"Both feet: swelling, calluses, clear deformity"],[50,"Both feet: extreme tenderness and spasm, and orthopedic shoes don't help"]]},
+ {lib:"scars", q:"Do you have scars from injuries or surgeries in service that hurt or keep breaking open?",
+  sevQ:"How many?", sev:[[10,"1 or 2"],[20,"3 or 4"],[30,"5 or more"]]},
+ {lib:"eczema", q:"Do you get rashes, eczema, or skin flare-ups?",
+  sevQ:"During a typical flare, and over the past year:", sev:[[0,"A small area, and creams handle it"],[10,"5 to 20% of my skin (your palm is about 1%), or a short course of pills or shots"],[30,"20 to 40% of my skin, or 6+ weeks of pills or shots in a year"],[60,"More than 40% of my skin, or nearly constant pills or shots"]],
+  tip:"Bring dated photos of flares to the exam."},
+]},
+{id:"breath", title:"Breathing & sinuses", intro:"Burn pits and airborne hazards are covered by the PACT Act for many deployment locations.", items:[
+ {lib:"sinusitis", q:"Do sinus infections, sinus pressure headaches, or drainage keep coming back?",
+  sevQ:"In a typical year:", sev:[[0,"It shows up on imaging, but I have few symptoms"],[10,"3 to 6 bouts, or 1 to 2 that needed weeks of antibiotics"],[30,"More than 6 bouts, or 3+ that needed weeks of antibiotics"]]},
+ {lib:"rhinitis", q:"Is your nose stuffy or blocked most days?",
+  sevQ:"Which fits best?", sev:[[0,"Congested, but I can breathe through it"],[10,"More than half blocked on both sides, or fully blocked on one side"],[30,"A doctor found nasal polyps"]]},
+ {lib:"asthma", q:"Do you have asthma or wheezing, or use an inhaler?",
+  sevQ:"Which fits best?", sev:[[10,"I use a rescue inhaler now and then"],[30,"I use an inhaler or controller every day"],[60,"Monthly doctor visits for flare-ups, or 3+ steroid bursts a year"]]},
+ {lib:"resp", q:"Are you short of breath, or do you have a chronic cough, bronchitis, COPD, or constrictive bronchiolitis?",
+  sevQ:"If you've had a lung function test (PFT):", sev:[[10,"Mild, or not tested yet"],[30,"Moderate: 56 to 70% of predicted"],[60,"Severe: 40 to 55% of predicted"]],
+  tip:"Rated from lung function tests. Ask for a PFT before you separate."},
+]},
+{id:"body", title:"Stomach, heart & whole body", items:[
+ {lib:"gerd", q:"Do you have heartburn or acid reflux most days, or food that gets stuck when you swallow?",
+  sevQ:"Which fits best?", sev:[[0,"Heartburn, but I don't need daily medicine"],[10,"I need daily medicine to control it"],[30,"I've needed my esophagus stretched (dilation) once or twice a year"]]},
+ {lib:"ibs", q:"Do you have stomach pain tied to bowel movements, with urgency, diarrhea, constipation, or bloating?",
+  sevQ:"Over the last 3 months, how often?", sev:[[10,"At least 1 day a month"],[20,"At least 3 days a month"],[30,"At least 1 day a week"]]},
+ {lib:"htn", q:"Do you have high blood pressure, or take blood pressure medicine?",
+  sevQ:"Which fits best?", sev:[[0,"Borderline readings, no medicine"],[10,"I take blood pressure medicine, or readings run 160+ over 100+"],[20,"Readings run 200+ on top or 110+ on the bottom"]]},
+ {lib:"ed", q:"Do you have erectile dysfunction? It's common with PTSD and blood pressure medicines.", tip:"Rated 0%, but it adds SMC-K: about $140 a month on top of your rating."},
+ {lib:"fibro", q:"Do you have widespread muscle pain and stiffness across your body?",
+  sevQ:"Which fits best?", sev:[[10,"Controlled with daily medicine"],[20,"It flares, and symptoms are there more than a third of the time"],[40,"Constant, and treatment doesn't help"]]},
+ {lib:"cfs", q:"Do you have exhausting fatigue that rest doesn't fix, with trouble thinking clearly?",
+  sevQ:"Compared with before, which fits best?", sev:[[10,"Medicine controls it, or a doctor had me on bed rest 1 to 2 weeks this year"],[20,"Nearly constant, cuts my daily activity a little, or 2 to 4 weeks of bed rest"],[40,"Cuts my daily activity to half or three-quarters of before, or 4 to 6 weeks of bed rest"],[60,"Cuts my daily activity to less than half, or 6+ weeks of bed rest"]]},
+ {lib:"cancer", q:"Have you been diagnosed with cancer?", tip:"Rated 100% during treatment and for 6 months after. Many cancers are PACT Act presumptive."},
+]},
+];
+const IX_STEPS = ["intro","service"].concat(SCREEN.map(s=>s.id)).concat(["review"]);
+
 const MISSIONS = [
 {id:"review",title:"Full claim review",desc:"Find the highest-value moves for every condition, including secondaries.",
  text:"Review the whole case. Find the highest-value moves to strengthen service connection and support an accurate rating for each condition, and name secondary conditions worth claiming."},
@@ -606,8 +759,8 @@ function makeCond(lib, target, side){
 }
 function starterCase(){
   return {v:1, starter:true,
-    profile:{branch:"Army", sep:"", retiring:false, combat:false, noise:false, blast:false, deployments:[{loc:"",year:""},{loc:"",year:""},{loc:"",year:""}]},
-    conditions:[makeCond("tinnitus",10),makeCond("ptsd",50),makeCond("back",20),makeCond("knee",10,"right-leg"),makeCond("migraine",30),makeCond("osa",50),makeCond("sinusitis",10),makeCond("rhinitis",10)],
+    profile:{branch:"Army", sep:"", retiring:false, combat:false, noise:false, blast:false, hand:"right", deployments:[{loc:"",year:""},{loc:"",year:""},{loc:"",year:""}]},
+    conditions:[], intake:{done:false, step:0, ans:{}, other:""},
     plays:{}, scout:{}, scoutSeen:"", grok:{history:[],plays:[],questions:[]}, updatedAt:""};
 }
 let state = starterCase();
@@ -631,7 +784,11 @@ let xaiKey = "";
 try{ xaiKey = sessionStorage.getItem(XAI_KEY_ITEM) || localStorage.getItem(XAI_KEY_ITEM) || ""; }catch(e){}
 
 try{ const t = localStorage.getItem("vp-tab"); if(t) tab = t; }catch(e){}
-if (location.hash && ["plan","claims","scout","prep","grok"].includes(location.hash.slice(1))) tab = location.hash.slice(1);
+const TABS = ["start","plan","claims","scout","prep","grok","learn"];
+if (!TABS.includes(tab)) tab = "start";
+if (location.hash && TABS.includes(location.hash.slice(1))) tab = location.hash.slice(1);
+/* First visit with nothing filled in: open on the intake. */
+function landing(){ if (!(location.hash && TABS.includes(location.hash.slice(1))) && !state.intake.done && !state.conditions.length) tab = "start"; }
 
 /* ============================================================
    MATH
@@ -808,6 +965,8 @@ function normalize(d){
   const s = Object.assign(starterCase(), d);
   s.profile = Object.assign(starterCase().profile, d.profile||{});
   s.grok = Object.assign({history:[],plays:[],questions:[]}, d.grok||{});
+  s.intake = Object.assign({done:false, step:0, ans:{}, other:""}, d.intake||{});
+  s.intake.ans = s.intake.ans || {};
   s.plays = s.plays||{}; s.scout = s.scout||{};
   s.conditions = (s.conditions||[]).map(c=>Object.assign({ev:{},notes:"",side:"",custom:null}, c));
   return s;
@@ -831,14 +990,17 @@ async function boot(){
           const local = loadLocal();
           if (local){ state = normalize(local); changed({full:true}); }
           setSave("ok", local ? "Saved" : "Ready");
+          landing();
         }
         store.loaded = true; render(); return;
       }
       const d = snap.data(); const j = JSON.stringify(d);
+      const first = !store.loaded;
       store.loaded = true;
       if (j === store.lastJSON || store.dirty) { if(!store.dirty) setSave("ok","Saved"); return; }
       store.lastJSON = j;
       state = normalize(d);
+      if (first) landing();
       setSave("ok","Saved");
       if (typingInView()) renderReadout(); else render();
     }, err=>{ setSave("off","Sync stopped"); });
@@ -856,9 +1018,11 @@ async function boot(){
   } else {
     const local = loadLocal();
     if (local) state = normalize(local);
+    landing();
     try{ localStorage.setItem("vp-probe","1"); localStorage.removeItem("vp-probe"); store.mode="local"; setSave("ok","Saved on this device"); }
     catch(e){ store.mode="none"; setSave("off","Not saved"); }
-    document.getElementById("scoutText").textContent = "Scout: open in Claude to sync";
+    if (STATIC_SITE) document.getElementById("scoutChip").hidden = true;
+    else document.getElementById("scoutText").textContent = "Scout: open in Claude to sync";
     render();
   }
 }
@@ -925,17 +1089,171 @@ let seenAtOpen = null;
 function renderView(){
   const v = document.getElementById("view");
   if (tab==="scout"){ if (seenAtOpen===null) seenAtOpen = state.scoutSeen || ""; } else seenAtOpen = null;
+  document.getElementById("readout").hidden = tab==="start" && !state.intake.done; /* keep the questions up top until there's a claim to score */
   if (tab==="plan") v.innerHTML = viewPlan();
   else if (tab==="claims") v.innerHTML = viewClaims();
   else if (tab==="scout") v.innerHTML = viewScout();
   else if (tab==="prep") v.innerHTML = viewPrep();
+  else if (tab==="start") v.innerHTML = viewStart();
+  else if (tab==="learn") v.innerHTML = viewLearn();
   else v.innerHTML = viewGrok();
   if (tab==="scout") markScoutSeen();
 }
 
+/* ---------- START: intake + claim at a glance ---------- */
+function ixAns(lib){ return state.intake.ans[lib] || (state.intake.ans[lib] = {}); }
+/* The claim list the answers describe. A target comes only from the severity the veteran picked (the lowest level if skipped). */
+function ixPlan(){
+  const ans = state.intake.ans, hand = state.profile.hand==="left" ? "left" : "right", out = [];
+  SCREEN.forEach(sec=>sec.items.forEach(it=>{
+    const a = ans[it.lib]; if (!a || a.yes!=="yes") return;
+    const L = LIBMAP[it.lib];
+    const base = it.sev ? (typeof a.sev==="number" ? a.sev : it.sev[0][0]) : L.tiers[0][0];
+    const sides = !it.limb || !a.side ? [""] : it.oneRating ? [a.side==="both" ? "both" : a.side+"-"+it.limb]
+      : a.side==="both" ? ["left-"+it.limb, "right-"+it.limb] : [a.side+"-"+it.limb];
+    sides.forEach(side=>{
+      const minor = it.minor && side && side!=="both" && !side.startsWith(hand);
+      out.push({lib:it.lib, side, target: minor ? (it.minor[base] ?? base) : base, ev:{dx:!!a.dx, str:!!a.str, cont:!!a.cont},
+        noSide: !!it.limb && !a.side, noSev: !!it.sev && typeof a.sev!=="number"});
+    });
+  }));
+  return out;
+}
+/* Conditions worth a doctor's look: "Not sure" answers, common secondaries, and presumptives for the veteran's locations. */
+function worthChecking(list = state.conditions){
+  const ans = state.intake.ans || {}; const have = new Set(list.map(c=>c.lib)); const seen = new Set(); const out = [];
+  const add = (lib, why) => { if (!LIBMAP[lib] || have.has(lib) || seen.has(lib) || (ans[lib] && ans[lib].yes==="no")) return; seen.add(lib); out.push({lib, why}); };
+  Object.keys(ans).forEach(lib=>{ if (ans[lib].yes==="unsure") add(lib, "You answered \"Not sure.\" Ask your doctor to check."); });
+  list.forEach(c=>{ const L = LIBMAP[c.lib]; if (L) L.sec.forEach(s=>add(s, "Often secondary to your "+L.name+" claim.")); });
+  LIB.forEach(L=>{ if (L.id==="cancer") return; const pr = presInfo(L, state.profile); if (pr && pr.legal) add(L.id, pr.label+" for your deployments, if you have it."); });
+  return out.slice(0,12);
+}
+function buildFromIntake(){
+  const plan = ixPlan(); const prev = state.conditions.slice(); const used = new Set();
+  const take = (lib, side) => { const i = prev.findIndex((c,j)=>!used.has(j) && c.lib===lib && (c.side||"")===side); if (i<0) return null; used.add(i); return prev[i]; };
+  const conds = plan.map(x=>{
+    const old = take(x.lib, x.side) || take(x.lib, "");
+    const c = old ? Object.assign({}, old) : makeCond(x.lib, x.target, x.side);
+    c.side = x.side; c.target = x.target; c.ev = Object.assign({}, old ? old.ev : {});
+    ["dx","str","cont"].forEach(k=>{ if (x.ev[k]) c.ev[k] = true; else delete c.ev[k]; });
+    return c;
+  });
+  prev.forEach(c=>{ if (c.custom) conds.push(c); });
+  (state.intake.other||"").split("\n").map(s=>s.trim()).filter(Boolean).slice(0,15).forEach(name=>{
+    if (!conds.some(c=>c.custom && c.custom.name.toLowerCase()===name.toLowerCase())) conds.push({uid:uidGen(), lib:"custom", side:"", target:0, ev:{}, notes:"", custom:{name:clip(name,80)}});
+  });
+  state.conditions = conds; state.intake.done = true; tab = "start";
+  renderTabs(); changed({full:true});
+}
+
+function viewStart(){
+  const ix = state.intake;
+  if (ix.done) return viewGlance();
+  const step = Math.max(0, Math.min(ix.step||0, IX_STEPS.length-1));
+  const id = IX_STEPS[step]; const sec = SCREEN.find(s=>s.id===id);
+  const name = id==="service" ? "Your service" : id==="review" ? "Review" : sec ? sec.title : "";
+  const body = id==="intro" ? ixIntro() : id==="service" ? profilePanel() : id==="review" ? ixReview() : ixSection(sec);
+  const next = id==="review" ? `<button class="btn" data-act="ix-build">Build my claim</button>`
+    : `<button class="btn" data-act="ix-go" data-step="${step+1}">${id==="intro" ? "Let's go" : "Next"}</button>`;
+  return `<div class="section">
+    <div class="ix-prog"><span class="label">${step===0 ? "Claim builder" : "Step "+step+" of "+(IX_STEPS.length-1)+" · "+esc(name)}</span><i><b style="width:${Math.round(step/(IX_STEPS.length-1)*100)}%"></b></i></div>
+    ${body}
+    <div class="ix-nav">${step>0 ? `<button class="btn ghost" data-act="ix-go" data-step="${step-1}">Back</button>` : "<span></span>"}${next}</div>
+  </div>`;
+}
+function ixIntro(){
+  return `<div class="panel ix-hero">
+    <h2>Build your claim in about 10 minutes</h2>
+    <p>Plain questions, one body area at a time. Answer for what you actually live with, on typical days and worst days. The playbook turns your answers into a claim list, a target for each condition, and the evidence you still need.</p>
+    <ul class="ix-points">
+      <li><b>Claim everything real.</b> Most veterans leave conditions off because they've gotten used to them. That's where ratings get lost.</li>
+      <li><b>Describe it accurately.</b> Accurate and complete is what gets you the rating you've earned. Overstating is fraud, examiners test for it, and it can sink the whole claim.</li>
+      <li><b>Not sure?</b> Answer "Not sure" and it goes on a list to ask a doctor about.</li>
+    </ul>
+    <p class="note">Your answers stay ${store.mode==="db" ? "in your private storage in Claude" : "in this browser"}. You can change them any time.</p>
+  </div>`;
+}
+function ixSection(sec){
+  return `<div class="sec-head"><div><h2>${esc(sec.title)}</h2>${sec.intro?`<p class="muted" style="margin-top:6px;max-width:66ch">${esc(sec.intro)}</p>`:""}</div></div>
+    <div class="ix-qs">${sec.items.map(ixItem).join("")}</div>`;
+}
+function ixItem(it){
+  const L = LIBMAP[it.lib]; const a = state.intake.ans[it.lib] || {}; const pr = presInfo(L, state.profile);
+  const yn = [["yes","Yes"],["no","No"],["unsure","Not sure"]].map(([v,l])=>`<button class="${a.yes===v?"on":""}" data-act="ix-ans" data-lib="${it.lib}" data-v="${v}" aria-pressed="${a.yes===v}">${l}</button>`).join("");
+  let more = "";
+  if (a.yes==="yes"){
+    const sev = it.sev ? `<div class="blk"><div class="sub-h">${esc(it.sevQ)}</div><div class="tiers">${it.sev.map(([t,l])=>`<label class="tier opt ${a.sev===t?"sel":""}"><input type="radio" name="ix-sev-${it.lib}" data-ix="sev" data-lib="${it.lib}" value="${t}" ${a.sev===t?"checked":""}><span class="d">${esc(l)}</span></label>`).join("")}</div></div>` : "";
+    const sides = it.limb ? `<div class="blk"><div class="sub-h">Which side?</div><div class="seg" role="group" aria-label="Side">${[["left","Left"],["right","Right"],["both","Both"]].map(([v,l])=>`<button class="${a.side===v?"on":""}" data-act="ix-side" data-lib="${it.lib}" data-v="${v}">${l}</button>`).join("")}</div></div>` : "";
+    const ev = `<div class="blk"><div class="sub-h">What's on paper?</div>${[["dx","A doctor has diagnosed it"],["str","It's in my military medical records (sick call, profile, PDHA)"],["cont","It's been going on since service, or I'm still being treated"]].map(([k,l])=>`<label class="check"><input type="checkbox" data-ix="ev" data-lib="${it.lib}" data-k="${k}" ${a[k]?"checked":""}><span>${l}</span></label>`).join("")}</div>`;
+    more = `<div class="ix-more">${sev}${sides}${ev}${it.tip?`<p class="note">${esc(it.tip)}</p>`:""}</div>`;
+  }
+  return `<div class="ix-q ${a.yes==="yes"?"yes":""}"><div class="ix-qrow"><p class="ix-text">${esc(it.q)}${pr&&pr.legal?` <span class="pill od">${esc(pr.label)}</span>`:""}</p><div class="seg ix-yn" role="group" aria-label="Answer">${yn}</div></div>${more}</div>`;
+}
+function evChips(ev, pr){
+  return [["dx","Diagnosed"],["str","In military records"],["cont","Ongoing since service"]].map(([k,l])=>`<span class="chk ${ev[k]?"":"miss"}">${ev[k]?"✓":"✗"} ${l}</span>`).join("")
+    + (pr && (pr.legal||pr.inserv) ? `<span class="chk">${esc(pr.label)}</span>` : "");
+}
+function ixReview(){
+  const plan = ixPlan();
+  const r = combinedRating(plan.map(x=>({pct:x.target, side:x.side})));
+  const pay = (RATES[r.rating]||0) + (plan.some(x=>x.lib==="ed") ? SMCK : 0);
+  const checks = worthChecking(plan);
+  const rows = plan.map(x=>{ const L = LIBMAP[x.lib];
+    return `<div class="ix-row"><div><span class="nm">${esc(L.name)}</span>${x.side?` <span class="note">· ${esc(sideLabel(x.side))}</span>`:""}${x.noSide?` <span class="note" style="color:var(--signal)">· pick a side</span>`:""}${x.noSev?` <span class="note" style="color:var(--signal)">· severity not answered, so set to the lowest level</span>`:""}
+      <div class="chips">${evChips(x.ev, presInfo(L, state.profile))}</div></div><span class="pct">${x.target}%</span></div>`; }).join("");
+  return `<div class="sec-head"><div><h2>Review your claim</h2><p class="muted" style="margin-top:6px;max-width:66ch">Each target comes straight from what you described. Go back and change any answer that isn't right.</p></div></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="ix-big"><div><span class="label">Combined target</span><div class="big target num">${r.rating}<small>%</small></div></div><div><span class="label">Monthly, tax-free</span><div class="money num">${money(pay)}</div></div></div>
+        <p class="chain" style="margin-top:8px">VA math: ${r.chain.length ? esc(r.chain.join(" → ")+", rounds to "+r.rating+"%") : "nothing yet"}${r.bilateral.length ? " · bilateral factor on "+r.bilateral.map(b=>b.k+"s").join(" & ") : ""}</p>
+        <div class="ix-list" style="margin-top:10px">${rows || `<div class="empty">No conditions yet. Go back and answer Yes to anything you actually have.</div>`}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+        ${checks.length ? `<div class="panel"><div class="sub-h">Worth asking a doctor about</div><ul class="moves">${checks.map(w=>`<li><b>${esc(LIBMAP[w.lib].name)}</b>: ${esc(w.why)}</li>`).join("")}</ul><p class="note" style="margin-top:8px">Claim these only if a doctor finds them. You can add them later from Claims.</p></div>` : ""}
+        <label class="panel field"><span class="sub-h" style="margin:0">Anything else? One per line</span><textarea id="ix-other" placeholder="e.g. hemorrhoids&#10;varicose veins">${esc(state.intake.other||"")}</textarea><span class="note">These go on your list as custom claims. Set each target in its claim card.</span></label>
+        <p class="note">Building replaces your current claim list with this one. Notes you already wrote on matching claims are kept.</p>
+      </div>
+    </div>`;
+}
+function viewGlance(){
+  const t = totals(); const k = clockInfo();
+  const gaps = t.scored.filter(({c,s})=>c.target>0 && s.likely<c.target).sort((a,b)=>(b.c.target-b.s.likely)-(a.c.target-a.s.likely));
+  const checks = worthChecking();
+  const list = t.scored.map(({c,s})=>`<div class="ix-row"><div><button class="link-btn" data-act="open-card" data-uid="${c.uid}" style="font-weight:600;font-size:14.5px">${esc(condName(c))}</button>${c.side?` <span class="note">· ${esc(sideLabel(c.side))}</span>`:""}
+      <div class="chips"><span class="pill ${level(Math.min(s.sc,s.rt))}">${levelWord(Math.min(s.sc,s.rt))}</span>${!s.connected ? `<span class="chk miss">service connection not proven yet</span>` : s.likely<c.target ? `<span class="chk miss">evidence supports ${s.likely}% today</span>` : `<span class="chk">evidence matches</span>`}</div></div><span class="pct">${c.target}%</span></div>`).join("");
+  return `<div class="section">
+    <div class="sec-head"><div><h2>Your claim at a glance</h2><p class="muted" style="margin-top:6px;max-width:68ch">Built from your answers. The fastest honest way to a higher rating is closing the gap between what you live with and what's on paper.</p></div>
+      <div class="row"><button class="btn ghost sm" data-act="ix-redo">Redo the questions</button><button class="btn sm" data-act="tab" data-tab="claims">Open claims</button></div></div>
+    <div class="grid2">
+      <div class="panel">
+        <div class="ix-big"><div><span class="label">Target</span><div class="big target num">${t.T.rating}<small>%</small></div></div><div><span class="label">Evidence supports today</span><div class="big num">${t.L.rating}<small>%</small></div></div></div>
+        <div class="ix-list" style="margin-top:12px">${list || `<div class="empty">No claims yet. <button class="link-btn" data-act="ix-redo">Answer the questions</button></div>`}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+        <div class="panel"><div class="sub-h">Close the gap · your next moves</div>
+          ${gaps.length ? `<ol class="moves">${gaps.slice(0,6).map(({c,s})=>`<li><b>${esc(condName(c))}</b>: ${esc(s.next)} <span class="gap">${s.likely}% → ${c.target}%</span></li>`).join("")}</ol>` : `<p>Your evidence supports every target. Keep your symptom log going and show up to every exam.</p>`}
+        </div>
+        <div class="panel"><div class="sub-h">Your clock</div>${k.sep ? `<p>${esc(k.line)}.</p>` : `<p>Add your separation date in <button class="link-btn" data-act="tab" data-tab="plan">Game plan</button> to time the BDD window.</p>`}</div>
+        ${checks.length ? `<div class="panel"><div class="sub-h">Worth checking with a doctor</div><ul class="moves">${checks.map(w=>`<li><b>${esc(LIBMAP[w.lib].name)}</b>: ${esc(w.why)} <button class="link-btn" data-act="add-lib" data-lib="${w.lib}">+ Add</button></li>`).join("")}</ul></div>` : ""}
+      </div>
+    </div>
+    <div class="panel"><div class="sub-h">Honest ways ratings go higher</div>
+      <ul class="moves">
+        <li><b>Claim every real condition</b>, including the ones you've gotten used to.</li>
+        <li><b>Claim secondaries</b>: conditions caused or worsened by another service-connected one.</li>
+        <li><b>Rate each side</b>: both knees, both legs, or both arms add the bilateral factor.</li>
+        <li><b>Report flare-ups and your worst days</b>: examiners must estimate what you lose during a flare.</li>
+        <li><b>Stop range-of-motion tests where pain starts</b>: painful motion earns at least the minimum rating for that joint.</li>
+        <li><b>Use presumptives</b>: PACT Act and Gulf War rules skip the hardest proof for covered conditions.</li>
+      </ul>
+      <p style="margin-top:12px"><button class="btn ghost sm" data-act="tab" data-tab="learn">Learn how each one works</button></p>
+    </div>
+  </div>`;
+}
+
 /* ---------- PLAN ---------- */
-function viewPlan(){
-  const p = state.profile; const k = clockInfo(); const f = deployFlags(p);
+function profilePanel(){
+  const p = state.profile; const f = deployFlags(p);
   const deps = p.deployments.map((d,i)=>{
     const pact = PACT_LOCS.includes(d.loc), gulf = GULF_LOCS.includes(d.loc);
     return `<div class="dep">
@@ -948,6 +1266,27 @@ function viewPlan(){
       ${(pact||gulf) ? `<div class="flags">${pact?'<span class="pill od">PACT location</span>':''}${gulf?'<span class="pill od">Gulf War location</span>':''}</div>`:""}
     </div>`;
   }).join("");
+  return `<div class="panel">
+      <div class="sec-head" style="margin-bottom:14px"><h2>Your service</h2><span class="note">Drives the clock, presumptives, deadlines, and arm ratings.</span></div>
+      <div class="profile">
+        <label class="field"><span class="label">Branch</span><select id="pf-branch" data-bind="profile" data-k="branch">${BRANCHES.map(b=>`<option ${b===p.branch?"selected":""}>${b}</option>`).join("")}</select></label>
+        <label class="field"><span class="label">Separation date</span><input type="date" id="pf-sep" data-bind="profile" data-k="sep" value="${esc(p.sep)}"></label>
+        <label class="field"><span class="label">Dominant hand</span><select id="pf-hand" data-bind="profile" data-k="hand"><option value="right" ${p.hand!=="left"?"selected":""}>Right</option><option value="left" ${p.hand==="left"?"selected":""}>Left</option></select></label>
+        <div class="field wide" style="grid-column:1 / -1"><span class="label">What your record shows</span>
+          <label class="check"><input type="checkbox" id="pf-combat" data-bind="profile" data-k="combat" ${p.combat?"checked":""}><span>Combat award (CAR, CIB, CAB, CAM, Purple Heart)</span></label>
+          <label class="check"><input type="checkbox" id="pf-noise" data-bind="profile" data-k="noise" ${p.noise?"checked":""}><span>Regular noise exposure (weapons, vehicles, aircraft, generators)</span></label>
+          <label class="check"><input type="checkbox" id="pf-blast" data-bind="profile" data-k="blast" ${p.blast?"checked":""}><span>Blast or concussion exposure</span></label>
+          <label class="check"><input type="checkbox" id="pf-retire" data-bind="profile" data-k="retiring" ${p.retiring?"checked":""}><span>Retiring (20+ years or medical)</span></label>
+        </div>
+        <div class="field wide" style="grid-column:1 / -1"><span class="label">Deployments · ${f.count} entered${f.pact?" · PACT covered":""}${f.gulf?" · Gulf War covered":""}</span>
+          <div class="deps">${deps}</div>
+          <div><button class="btn ghost sm" data-act="dep-add">Add deployment</button></div>
+        </div>
+      </div>
+    </div>`;
+}
+function viewPlan(){
+  const p = state.profile; const k = clockInfo();
 
   let ms = [];
   if (k.sep){
@@ -976,24 +1315,8 @@ function viewPlan(){
       <div class="due"><button class="btn ghost sm" data-act="unsave" data-id="${esc(s.id)}">Remove</button></div></div>`).join("")}</div>` : "";
 
   return `<div class="section">
-    ${state.starter ? `<div class="banner"><p><b>Starter case loaded.</b> These are the claims multi-deployment veterans file most. Keep the ones you actually have, remove the rest, and fill in your service below. Nothing saves until you change something.</p><button class="btn sm" data-act="tab" data-tab="claims">Review claims</button></div>`:""}
-    <div class="panel">
-      <div class="sec-head" style="margin-bottom:14px"><h2>Your service</h2><span class="note">Drives the clock, presumptives, and deadlines.</span></div>
-      <div class="profile">
-        <label class="field"><span class="label">Branch</span><select id="pf-branch" data-bind="profile" data-k="branch">${BRANCHES.map(b=>`<option ${b===p.branch?"selected":""}>${b}</option>`).join("")}</select></label>
-        <label class="field"><span class="label">Separation date</span><input type="date" id="pf-sep" data-bind="profile" data-k="sep" value="${esc(p.sep)}"></label>
-        <div class="field wide"><span class="label">What your record shows</span>
-          <label class="check"><input type="checkbox" id="pf-combat" data-bind="profile" data-k="combat" ${p.combat?"checked":""}><span>Combat award (CAR, CIB, CAB, CAM, Purple Heart)</span></label>
-          <label class="check"><input type="checkbox" id="pf-noise" data-bind="profile" data-k="noise" ${p.noise?"checked":""}><span>Regular noise exposure (weapons, vehicles, aircraft, generators)</span></label>
-          <label class="check"><input type="checkbox" id="pf-blast" data-bind="profile" data-k="blast" ${p.blast?"checked":""}><span>Blast or concussion exposure</span></label>
-          <label class="check"><input type="checkbox" id="pf-retire" data-bind="profile" data-k="retiring" ${p.retiring?"checked":""}><span>Retiring (20+ years or medical)</span></label>
-        </div>
-        <div class="field wide" style="grid-column:1 / -1"><span class="label">Deployments · ${f.count} entered${f.pact?" · PACT covered":""}${f.gulf?" · Gulf War covered":""}</span>
-          <div class="deps">${deps}</div>
-          <div><button class="btn ghost sm" data-act="dep-add">Add deployment</button></div>
-        </div>
-      </div>
-    </div>
+    ${!state.intake.done ? `<div class="banner"><p><b>Start with the questions.</b> About 10 minutes of plain questions builds your claim list from what you actually live with.</p><button class="btn sm" data-act="tab" data-tab="start">Start</button></div>`:""}
+    ${profilePanel()}
 
     <div>
       <div class="sec-head" style="margin-bottom:12px"><h2>The clock</h2></div>
@@ -1056,7 +1379,7 @@ function viewClaims(){
       <p class="muted"><b>Service connection</b> asks whether VA will link it to service. <b>Rating</b> asks whether the evidence supports the percent you picked. Both are evidence scores, not promises.</p></div>
     ${state.conditions.length ? `<div class="report-wrap"><table class="report">
       <thead><tr><th>Condition</th><th>Target</th><th>Service connection</th><th>Rating</th><th>Likely</th><th>Next best move</th></tr></thead>
-      <tbody>${rows}</tbody></table></div>` : `<div class="empty">No conditions yet. Add the ones you actually have below.</div>`}
+      <tbody>${rows}</tbody></table></div>` : `<div class="empty">No conditions yet. <button class="link-btn" data-act="tab" data-tab="start">Answer the questions</button> to build your list, or add conditions below.</div>`}
 
     <div class="panel">
       <div class="sub-h">Add a condition</div>
@@ -1137,7 +1460,7 @@ function viewScout(){
     return st!=="dismissed";
   });
   const seen = seenAtOpen || "";
-  const metaLine = store.mode!=="db" ? "Open this page in Claude to receive scout reports."
+  const metaLine = store.mode!=="db" ? (STATIC_SITE ? "On this site the feed fills from GrokBot. Run a \"Scout X and the web\" mission." : "Open this page in Claude to receive scout reports.")
     : scoutMeta && scoutMeta.lastRun ? `Last sweep ${fmt(new Date(scoutMeta.lastRun))}${scoutMeta.summary?": "+esc(scoutMeta.summary):""}` : "First sweep pending.";
   const list = items.length ? `<div class="feed">${items.map(i=>{
     const st = state.scout[i.id]; const url = safeUrl(i.sourceUrl || i.source);
@@ -1161,7 +1484,7 @@ function viewScout(){
           ${i.src==="GrokBot" ? `<button class="btn ghost sm" data-act="grok-del" data-id="${esc(i.id)}">Delete</button>`:""}
         </div>
       </div></article>`;}).join("")}</div>`
-    : `<div class="empty">${scoutFilter==="all" ? `Nothing yet. The scout sweeps VA.gov, the Federal Register, VA news, and VSO updates every morning and drops new plays here, each with a confidence score and source. You can also run a <button class="link-btn" data-act="tab" data-tab="grok">GrokBot scout mission</button>.` : "Nothing in this filter."}</div>`;
+    : `<div class="empty">${scoutFilter!=="all" ? "Nothing in this filter." : STATIC_SITE ? `Nothing yet. Run a <button class="link-btn" data-act="tab" data-tab="grok">GrokBot scout mission</button> and Grok's plays land here, each with a confidence score and source.` : `Nothing yet. The scout sweeps VA.gov, the Federal Register, VA news, and VSO updates every morning and drops new plays here, each with a confidence score and source. You can also run a <button class="link-btn" data-act="tab" data-tab="grok">GrokBot scout mission</button>.`}</div>`;
   return `<div class="section">
     <div class="sec-head"><div><h2>Scout</h2><p class="muted" style="margin-top:6px">${metaLine}</p></div>
       <div class="filters">${[["all","All"],["saved","In my plan"],["grok","GrokBot"],["dismissed","Not for me"]].map(([k,l])=>`<button class="fbtn ${scoutFilter===k?"on":""}" data-act="filter" data-f="${k}">${l}</button>`).join("")}</div></div>
@@ -1226,18 +1549,91 @@ Couldn't lift kid, left work at 1300 | 800mg ibuprofen | -4 hrs</pre></div>
   </div>`;
 }
 
+/* ---------- LEARN ---------- */
+function mathSteps(pcts){
+  let c = 0;
+  return pcts.map(r=>{ const room = 100-c; const add = r*room/100; c = Math.round(c+add); return `${r}% of the ${room}% still counted as healthy adds ${Math.round(add*10)/10}, so you're at ${c}%`; })
+    .concat([`Round to the nearest 10 (5 rounds up): ${roundVA(c)}%`]);
+}
+const FORMS = [["21-526EZ","Apply for disability compensation: first claim, new conditions, or increases"],["21-0966","Intent to File: holds your effective date for 1 year"],["21-0781","PTSD stressor statement"],["21-4138","Statement in support of claim: your own words"],["21-10210","Lay or witness statement from a spouse, family member, or someone you served with"],["21-22","Appoint a VSO as your free representative"],["20-0995","Supplemental claim: new and relevant evidence after a decision"],["20-0996","Higher-level review: a senior reviewer looks again, no new evidence"],["10182","Board appeal: a Veterans Law Judge decides"],["21-8940","TDIU: paid at 100% when service-connected conditions keep you from working"],["21-686c","Add a spouse, children, or parents (30%+)"],["20-10206","Get copies of your records, exam reports, and C-file"],["10-10EZ","Enroll in VA health care"],["28-1900","Veteran Readiness and Employment (VR&E)"]];
+const GLOSSARY = [["STR","Service treatment records: your military medical file"],["PDHA","Post-Deployment Health Assessment (DD 2796), plus the reassessment (DD 2900) months later"],["C&P exam","Compensation and Pension exam: the VA medical exam that drives your rating"],["DBQ","Disability Benefits Questionnaire: the form the examiner fills out for each condition"],["Nexus","The medical link between your condition and service. The standard is \"at least as likely as not\""],["SC","Service-connected"],["Combined rating","All your ratings merged with VA math, then rounded to the nearest 10"],["Bilateral factor","Extra 10% of the combined value when both arms or both legs are rated"],["Pyramiding","Rating the same symptom twice. Not allowed, but different symptoms can each be rated"],["Effective date","The date your pay counts from"],["ITF","Intent to File: holds your effective date for 1 year"],["BDD","Benefits Delivery at Discharge: filing 180 to 90 days before you separate"],["P&T","Permanent and Total: a 100% rating VA doesn't expect to improve"],["TDIU","Total Disability based on Individual Unemployability: paid at 100%"],["SMC","Special Monthly Compensation: extra pay on top of your rating for specific losses"],["VSO","Veterans Service Organization: free, accredited claim help"],["C-file","Your VA claims file"]];
+function viewLearn(){
+  const mine = state.conditions.map(c=>c.target).filter(x=>x>0).sort((a,b)=>b-a);
+  const ex = mine.length>=2 ? mine.slice(0,8) : [50,30,10];
+  const sec = (title, sub, body, open) => `<details ${open?"open":""}><summary><span>${title}${sub?`<small>${sub}</small>`:""}</span></summary><div class="lbody">${body}</div></details>`;
+  const kv = rows => `<dl class="kv">${rows.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>`;
+  return `<div class="section">
+    <div class="sec-head"><div><h2>Learn the system</h2><p class="muted" style="margin-top:6px;max-width:68ch">How VA decides, in plain English. Knowing the rules is how you make sure nothing you've earned gets left on the table.</p></div></div>
+    <div class="learn">
+    ${sec("How VA math works", "Why 50% plus 30% isn't 80%", `
+      <p>VA doesn't add ratings. It starts with your highest rating, then applies each next one only to the part of you still counted as healthy. Then it rounds to the nearest 10.</p>
+      <h4>${mine.length>=2 ? "With your numbers" : "Example"}: ${ex.join("%, ")}%</h4>
+      <ol>${mathSteps(ex).map(s=>`<li>${esc(s)}</li>`).join("")}</ol>
+      <p><b>Bilateral factor.</b> When both arms or both legs have ratings, VA combines those first and adds 10% of that value before combining it with everything else. Claim each side that's actually affected.</p>
+      <p><b>Small ratings matter.</b> A combined 64% pays at 60%, and 65% pays at 70%. One accurate 10% can move you a full step.</p>`, true)}
+    ${sec("Honest ways ratings go higher", "Where veterans most often leave percentage on the table", `<ul>
+      <li><b>Claim everything real.</b> Ringing ears, bad knees, sleep problems, and heartburn are easy to shrug off after years in. Each one you actually have is a separate rating.</li>
+      <li><b>Secondary conditions.</b> PTSD and its medications are linked to sleep apnea, ED, GERD, IBS, and hypertension. NSAIDs for joint pain are linked to GERD. A back condition can send nerve pain down each leg. A bad knee can wreck the hip. Each needs a doctor's opinion linking it to the first condition.</li>
+      <li><b>Separate symptoms, separate ratings.</b> One knee can carry separate ratings for limited bending, limited straightening, instability, and a torn meniscus. A back condition and the nerve pain it causes in each leg are rated separately. The only rule is that the same symptom can't be rated twice.</li>
+      <li><b>Painful motion.</b> A joint that hurts when it moves is entitled to at least the lowest compensable rating for that joint (38 CFR 4.59).</li>
+      <li><b>Flare-ups.</b> Examiners must estimate how much motion you lose during flare-ups and after repeated use, even if you're not in one that day (DeLuca v. Brown, Sharp v. Shulkin). Tell them how often, how long, and what you can't do.</li>
+      <li><b>Mental health, fully described.</b> One rating covers PTSD, depression, anxiety, and insomnia, based on how symptoms hit work and relationships. Describing only a good week is the most common way veterans get under-rated.</li>
+      <li><b>Special Monthly Compensation.</b> Extra pay on top of your rating. SMC-K (about $140 a month) covers loss of use of a creative organ (including ED), a hand, a foot, or an eye.</li>
+      <li><b>TDIU.</b> If service-connected conditions keep you from holding a steady job, you can be paid at the 100% rate. It usually takes one condition at 60%+, or 70% combined with one condition at 40%+.</li>
+      <li><b>Increases.</b> When a condition gets worse, file for an increase. Keep getting treated so your records show it.</li></ul>
+      <p class="note">Every one of these depends on the real severity being on the record. None of them works by overstating it.</p>`)}
+    ${sec("Five ways to service-connect", "Direct, presumptive, secondary, aggravation, 1151", kv([
+      ["Direct","It started or happened in service, you have it now, and a doctor links the two."],
+      ["Presumptive","The law assumes the link for certain conditions and service: PACT Act burn pit and airborne hazard locations, Gulf War illnesses, and certain chronic diseases (like arthritis or hypertension) that reach 10% within a year of discharge."],
+      ["Secondary","A service-connected condition caused it or made it worse (38 CFR 3.310)."],
+      ["Aggravation","You had it before service, and service made it worse, like flat feet noted at your entry exam."],
+      ["Section 1151","VA medical care injured you or made a condition worse. It's paid as if service-connected."]]))}
+    ${sec("Evidence that wins", "What raters actually look for", `<ul>
+      <li><b>A current diagnosis.</b> VA can't rate what isn't diagnosed. Tinnitus is the exception: your report is enough.</li>
+      <li><b>Service treatment records.</b> Sick call, profiles, ER visits, and your post-deployment health assessments show it started in service.</li>
+      <li><b>A nexus opinion.</b> A doctor writes that it's "at least as likely as not" (50% or more) caused by service, and explains why. Opinions without reasons get little weight.</li>
+      <li><b>Statements.</b> You, your spouse, and the people you served with can describe what you see and feel (VA Forms 21-4138 and 21-10210). Facts, dates, and examples beat adjectives.</li>
+      <li><b>Treatment since service.</b> Ongoing care shows the condition is chronic and how bad it is.</li></ul>
+      <p><b>Benefit of the doubt.</b> When the evidence for and against is roughly balanced, the law says VA must decide in your favor (38 CFR 3.102).</p>`)}
+    ${sec("Deadlines and back pay", "Your effective date is money", kv([
+      ["180–90 days out","Benefits Delivery at Discharge (BDD). File while you're still in; the decision can come close to your last day."],
+      ["Under 90 days","You can still file before you leave, as a standard pre-discharge claim."],
+      ["First year out","File within 1 year of discharge and your effective date is the day after discharge: back pay to day one."],
+      ["Intent to File","VA Form 21-0966, online, or by phone. It holds your effective date for 1 year while you build the claim."],
+      ["After a decision","Pick a review lane within 1 year to keep your effective date: Supplemental Claim, Higher-Level Review, or Board appeal."]]))}
+    ${sec("What each rating unlocks", "Beyond the monthly payment", kv([
+      ["Any rating","VA care for your service-connected conditions; commissary, exchange, and MWR access; 10-point federal hiring preference."],
+      ["10%+","Tax-free monthly pay; VA home loan funding fee waived; Veteran Readiness and Employment (VR&E) with an employment handicap (20%+, or 10% with a serious one)."],
+      ["30%+","Extra monthly pay for a spouse, children, and dependent parents; eligibility for noncompetitive federal appointments."],
+      ["50%+","VA health care Priority Group 1, with no copays. Military retirees get CRDP: full retirement pay plus VA pay."],
+      ["100% / TDIU","Paid at the 100% rate. If rated Permanent and Total: CHAMPVA coverage and Chapter 35 education benefits for your family, and property tax relief in many states."]]) + `<p class="note">States add their own benefits (property tax, tuition, license plates, hunting and fishing). Check your state's veterans affairs office.</p>`)}
+    ${sec("The C&P exam", "The single biggest factor in your rating", `<p>The examiner fills out a DBQ for each condition: frequency, severity, range of motion, flare-ups, and how it affects work. The rater mostly decides from that form.</p>
+      <ul><li>Describe your typical day and your worst days, and how often the worst days come.</li><li>Stop motion tests where pain starts and say so.</li><li>Bring your symptom log, medication list, and statements.</li><li>If the exam was rushed or wrong, request the report (VA Form 20-10206) and challenge it.</li></ul>
+      <p><button class="btn ghost sm" data-act="tab" data-tab="prep">Open exam prep</button></p>`)}
+    ${sec("Key forms", "What each one does", kv(FORMS.map(([n,d])=>["VA "+n, d])))}
+    ${sec("Glossary", "The jargon, decoded", kv(GLOSSARY))}
+    ${sec("Red flags", "Protect your claim and your back pay", `<ul>
+      <li>Anyone who guarantees a percentage.</li>
+      <li>Anyone who charges to help file your first claim, or wants a cut of your back pay for it. Accredited representatives can't charge for initial claims, and VSOs help for free.</li>
+      <li>Anyone who coaches you to report symptoms you don't have. It's fraud, and it puts every claim you have at risk.</li>
+      <li>Nexus letters for sale from someone who never examined you or read your records. VA gives them little weight.</li></ul>`)}
+    </div>
+  </div>`;
+}
+
 /* ---------- GROK ---------- */
 function caseFile(){
   const p = state.profile; const f = deployFlags(p); const t = totals();
   return {
     generated: new Date().toISOString().slice(0,10),
-    service:{branch:p.branch, separation_date:p.sep||null, retiring:!!p.retiring, combat_award:!!p.combat, noise_exposure:!!p.noise, blast_exposure:!!p.blast,
+    service:{branch:p.branch, separation_date:p.sep||null, dominant_hand:p.hand||"right", retiring:!!p.retiring, combat_award:!!p.combat, noise_exposure:!!p.noise, blast_exposure:!!p.blast,
       deployments:p.deployments.filter(d=>d.loc).map(d=>({location:d.loc, year:d.year||null, pact_covered:PACT_LOCS.includes(d.loc), gulf_war_covered:GULF_LOCS.includes(d.loc)})),
       pact_covered:f.pact, gulf_war_covered:f.gulf},
     projected:{target_combined:t.T.rating, evidence_supports_today:t.L.rating},
     conditions:t.scored.map(({c,s})=>({id:c.custom?c.uid:c.lib, name:condName(c), diagnostic_code:c.custom?null:LIBMAP[c.lib].dc, side:c.side||null, target_percent:c.target,
       service_connection_confidence:s.sc, rating_confidence:s.rt, likely_percent:s.connected?s.likely:0,
       evidence_on_hand:Object.keys(c.ev||{}).filter(k=>c.ev[k]), presumption:s.pres&&(s.pres.legal||s.pres.inserv)?s.pres.label:null, veteran_notes:c.notes||null})),
+    worth_checking:worthChecking().map(w=>LIBMAP[w.lib].name),
     plays_done:Object.keys(state.plays).filter(k=>state.plays[k]==="done"),
   };
 }
@@ -1444,10 +1840,21 @@ function refreshGrokRun(){
 /* ============================================================
    EVENTS
    ============================================================ */
+function scrollToTabs(){ const top = document.getElementById("tabs").getBoundingClientRect().top + window.scrollY - 8; if (window.scrollY > top) window.scrollTo({top, behavior:"smooth"}); }
 document.addEventListener("click", async e=>{
   const el = e.target.closest("[data-act]"); if (!el) return;
   const act = el.dataset.act;
-  if (act==="tab"){ tab = el.dataset.tab; try{ localStorage.setItem("vp-tab",tab); }catch(_){} renderTabs(); renderView(); renderScoutBadge(); const top = document.getElementById("tabs").getBoundingClientRect().top + window.scrollY - 8; if (window.scrollY > top) window.scrollTo({top, behavior:"smooth"}); return; }
+  if (act==="tab"){ tab = el.dataset.tab; try{ localStorage.setItem("vp-tab",tab); }catch(_){} renderTabs(); renderView(); renderScoutBadge(); scrollToTabs(); return; }
+  if (act==="ix-ans"){ ixAns(el.dataset.lib).yes = el.dataset.v; changed({full:true}); return; }
+  if (act==="ix-side"){ ixAns(el.dataset.lib).side = el.dataset.v; changed({full:true}); return; }
+  if (act==="ix-go"){ state.intake.step = Math.max(0, Math.min(+el.dataset.step, IX_STEPS.length-1)); changed({full:true}); scrollToTabs(); return; }
+  if (act==="ix-build"){ buildFromIntake(); scrollToTabs(); return; }
+  if (act==="ix-redo"){ state.intake.done = false; state.intake.step = 1; tab = "start"; renderTabs(); changed({full:true}); scrollToTabs(); return; }
+  if (act==="open-card"){
+    const u = el.dataset.uid; openCards.add(u); tab = "claims"; renderTabs(); renderView();
+    setTimeout(()=>{ const n = document.querySelector(`.card-head[data-uid="${u}"]`); if (n) n.scrollIntoView({behavior:"smooth", block:"start"}); }, 50);
+    return;
+  }
   if (act==="play"){ const v = el.dataset.v; if (v) state.plays[el.dataset.id]=v; else delete state.plays[el.dataset.id]; changed({full:true}); return; }
   if (act==="dep-add"){ state.profile.deployments.push({loc:"",year:""}); changed({full:true}); return; }
   if (act==="dep-remove"){ state.profile.deployments.splice(+el.dataset.i,1); changed({full:true}); return; }
@@ -1519,6 +1926,8 @@ document.addEventListener("change", e=>{
   if (el.dataset.actChange==="mission"){ mission = el.value; renderView(); return; }
   if (el.dataset.bind==="profile"){ state.profile[el.dataset.k] = el.type==="checkbox" ? el.checked : el.value; changed({full:true}); return; }
   if (el.dataset.bind==="dep" && el.tagName==="SELECT"){ state.profile.deployments[+el.dataset.i][el.dataset.k] = el.value; changed({full:true}); return; }
+  if (el.dataset.ix==="sev"){ ixAns(el.dataset.lib).sev = Number(el.value); changed({full:true}); return; }
+  if (el.dataset.ix==="ev"){ ixAns(el.dataset.lib)[el.dataset.k] = el.checked; changed(); return; }
   if (el.dataset.cond){
     const c = state.conditions.find(c=>c.uid===el.dataset.cond); if (!c) return;
     const f = el.dataset.f;
@@ -1530,6 +1939,7 @@ document.addEventListener("change", e=>{
 document.addEventListener("input", e=>{
   const el = e.target;
   if (el.id==="custom-mission"){ customMission = el.value.slice(0,2000); const b = document.getElementById("grok-brief"); if (b) b.value = grokBrief(); return; }
+  if (el.id==="ix-other"){ state.intake.other = el.value.slice(0,1000); changed(); return; }
   if (el.dataset.bind==="dep" && el.tagName==="INPUT"){ state.profile.deployments[+el.dataset.i][el.dataset.k] = el.value.slice(0,12); changed(); return; }
   if (el.dataset.cond && el.dataset.f==="notes"){ const c = state.conditions.find(c=>c.uid===el.dataset.cond); if (c){ c.notes = el.value.slice(0,6000); changed(); } }
 });
