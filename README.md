@@ -8,9 +8,9 @@ It covers:
 - **Deadlines:** the BDD and effective-date clock, counted from your separation date.
 - **Evidence:** per-condition checklists and what the C&P examiner measures.
 - **Exam prep:** C&P exam rules and a cheat sheet built from your own notes.
-- **GrokBot:** a mission brief you can paste into Grok, and an importer for its reply.
+- **GrokBot:** pick a mission, or type your own, and either send it to Grok in one click or run it live with your own xAI API key. Grok's plays, statement drafts, and exam questions are filed into the playbook.
 
-Everything you enter stays in your own browser's local storage. Nothing is sent anywhere.
+Everything you enter stays in your own browser's local storage. Nothing is sent anywhere unless you send it to Grok. In live mode, your key stays in your browser and goes only to api.x.ai, and each run sends your case file (no name) to xAI.
 
 **Accuracy is the play.** Document every real symptom completely. Overstating symptoms is fraud, examiners test for it, and it can sink a claim.
 

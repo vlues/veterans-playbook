@@ -93,6 +93,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
 .btn.ghost:hover{border-color:var(--ink);background:transparent;color:var(--ink)}
 .btn.sm{padding:5px 9px;font-size:11px}
+a.btn{text-decoration:none}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .field{display:flex;flex-direction:column;gap:5px;min-width:0}
@@ -589,6 +590,7 @@ const MISSIONS = [
  text:"Draft a personal statement (VA Form 21-4138 style) for each condition, using only facts in the case file. Put [FILL IN] wherever a fact is missing. Never invent symptoms, events, or dates."},
 {id:"mock",title:"Mock C&P exam",desc:"The questions an examiner will likely ask, and what each DBQ measures.",
  text:"Run a mock C&P exam: for each condition, list the questions the examiner will likely ask and what the Disability Benefits Questionnaire (DBQ) measures, with a tip for answering accurately and completely."},
+{id:"custom",title:"Your own mission",desc:"Tell GrokBot what to do, in your own words.",text:""},
 ];
 
 /* ============================================================
@@ -621,6 +623,12 @@ let downloads = null;
 let grokMcp = null;   /* mcp namespace when this view can reach the local grokbot server; null = copy/paste only */
 let grokBusy = false;
 const GROK_SERVER = "host:grokbot";
+let customMission = "";
+/* Outside Claude (e.g. GitHub Pages) there is no window.claude: live mode calls xAI from this browser with the viewer's own key. */
+const STATIC_SITE = !(window.claude && typeof window.claude.use==="function");
+const XAI_KEY_ITEM = "vp-xai-key";
+let xaiKey = "";
+try{ xaiKey = sessionStorage.getItem(XAI_KEY_ITEM) || localStorage.getItem(XAI_KEY_ITEM) || ""; }catch(e){}
 
 try{ const t = localStorage.getItem("vp-tab"); if(t) tab = t; }catch(e){}
 if (location.hash && ["plan","claims","scout","prep","grok"].includes(location.hash.slice(1))) tab = location.hash.slice(1);
@@ -1238,7 +1246,7 @@ function grokBrief(withCase = true){
   const m = MISSIONS.find(x=>x.id===mission) || MISSIONS[0];
   return `You are GrokBot, a VA disability claim strategist working for a U.S. veteran with ${Math.max(deployFlags(state.profile).count,0) || "multiple"} deployments.
 
-MISSION: ${m.text}
+MISSION: ${m.id==="custom" ? (customMission.trim() || "[Type your mission in the box above the brief.]") : m.text}
 
 GROUND RULES
 - Use 38 CFR Part 4 (VA Schedule for Rating Disabilities) and current VA rules. Use your live X and web search for anything that changed recently, and cite a source URL for every factual claim.
@@ -1264,17 +1272,20 @@ function grokMsgHtml(where){
 }
 function viewGrok(){
   const h = state.grok.history||[];
-  const live = !!grokMcp;
+  const viaKey = !grokMcp && STATIC_SITE && !!xaiKey;
+  const live = !!grokMcp || viaKey;
   return `<div class="section">
-    <div class="sec-head"><div><h2>GrokBot connector</h2><p class="muted" style="margin-top:6px;max-width:68ch">Hand your case to Grok, let it run live X and web search, and pull its plays, statement drafts, and mock exam questions straight back into your playbook. ${live
+    <div class="sec-head"><div><h2>GrokBot</h2><p class="muted" style="margin-top:6px;max-width:68ch">Give Grok a mission. It reads your case, runs live X and web search, and files plays into Scout, statement drafts into your claim cards, and mock exam questions into C&amp;P prep. ${grokMcp
       ? "Run mission sends the brief and case file (no name) to xAI through the grokbot server on this computer, using your own xAI key. Copy and paste still works if you'd rather choose what Grok sees."
-      : "Copying sends nothing anywhere: you choose what to paste into Grok, and your name isn't in the file."}</p></div></div>
+      : viaKey ? "Run mission sends the brief and case file (no name) from this browser straight to xAI with your API key. Copy and paste still works if you'd rather choose what Grok sees."
+      : "Nothing leaves this page unless you send it: you choose what goes to Grok, and your name isn't in the file."}</p></div></div>
     <div class="steps">
       <div class="panel" style="display:flex;flex-direction:column;gap:12px">
-        <div class="row"><span class="step-n">1</span><div><b>${live?"Pick a mission and run it":"Pick a mission and copy the brief"}</b><p class="note">${live?"Grok's plays land in Scout when it's done. Or copy the brief and paste it into Grok yourself.":"Paste it into Grok (grok.com, the X app, or a Grok project)."}</p></div></div>
+        <div class="row"><span class="step-n">1</span><div><b>${live?"Pick a mission and run it":"Pick a mission and send it to Grok"}</b><p class="note">${live?"Results file themselves into your playbook when Grok is done. Or send the brief to Grok yourself.":"Send to Grok copies the brief and opens Grok in a new tab. Paste it there (Cmd/Ctrl+V), send it, then bring the reply back in step 2."}</p></div></div>
         <div class="missions">${MISSIONS.map(m=>`<label class="mission ${m.id===mission?"sel":""}"><input type="radio" name="mission" id="mission-${m.id}" data-act-change="mission" value="${m.id}" ${m.id===mission?"checked":""}><div><b>${esc(m.title)}</b><span>${esc(m.desc)}</span></div></label>`).join("")}</div>
+        ${mission==="custom" ? `<label class="field"><span class="sub-h" style="margin:0">Your mission for GrokBot</span><textarea id="custom-mission" maxlength="2000" placeholder="e.g. Check whether my sinusitis and rhinitis are PACT presumptive for my deployments, and what evidence would close the gap.">${esc(customMission)}</textarea></label>` : ""}
         <textarea class="brief" id="grok-brief" readonly aria-label="GrokBot brief">${esc(grokBrief())}</textarea>
-        <div class="row">${live?`<button class="btn" id="grok-run-btn" data-act="grok-run" ${grokBusy?"disabled":""}>${grokBusy?"Running…":"Run mission"}</button>`:""}<button class="btn ${live?"ghost":""}" data-act="grok-copy">Copy brief</button>${downloads?`<button class="btn ghost" data-act="grok-file">Save case file (.json)</button>`:""}<span class="note" id="copy-note"></span></div>
+        <div class="row">${live?`<button class="btn" id="grok-run-btn" data-act="grok-run" ${grokBusy?"disabled":""}>${grokBusy?"Running…":"Run mission"}</button>`:""}<a class="btn ${live?"ghost":""}" href="https://grok.com/" target="_blank" rel="noopener" data-act="grok-send">Send to Grok</a><button class="btn ghost" data-act="grok-copy">Copy brief</button>${downloads?`<button class="btn ghost" data-act="grok-file">Save case file (.json)</button>`:""}<span class="note" id="copy-note"></span></div>
         <div id="grok-run-msg" style="display:contents">${grokMsgHtml("run")}</div>
       </div>
       <div class="panel" style="display:flex;flex-direction:column;gap:12px">
@@ -1287,6 +1298,18 @@ function viewGrok(){
         ${h.length?`<div class="blk"><div class="sub-h">Import history</div><div class="history">${h.slice(-6).reverse().map(x=>`<div><span>${fmt(new Date(x.at))} · ${esc((MISSIONS.find(m=>m.id===x.mission)||{}).title||"Import")}</span><span class="mono note">${x.plays}p · ${x.statements}s · ${x.questions}q</span></div>`).join("")}</div></div>`:""}
       </div>
     </div>
+    ${STATIC_SITE && !grokMcp ? liveModePanel() : ""}
+  </div>`;
+}
+function keyRemembered(){ try{ return !!localStorage.getItem(XAI_KEY_ITEM); }catch(e){ return false; } }
+function liveModePanel(){
+  return `<div class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <div class="row" style="justify-content:space-between"><div class="sub-h" style="margin:0">Live mode · run missions right here</div><span class="pill ${xaiKey?"good":"od"}">${xaiKey?"On":"Off"}</span></div>
+    ${xaiKey ? `<p class="note" style="max-width:70ch">Your xAI API key is saved ${keyRemembered()?"on this device":"for this tab only"}. Run mission calls Grok from this page; each run uses your xAI API credits.</p>
+      <div class="row"><button class="btn ghost sm" data-act="xai-forget">Forget key</button></div>`
+    : `<p class="note" style="max-width:70ch">Have an xAI API key from console.x.ai? Add it and GrokBot runs missions from this page, no copy and paste. The key stays in this browser and goes only to api.x.ai. Each run sends your case file (no name) to xAI and uses your API credits.</p>
+      <div class="add-row"><input type="password" id="xai-key" autocomplete="off" spellcheck="false" placeholder="xai-…" aria-label="xAI API key" style="background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:8px 10px;width:100%"><button class="btn" data-act="xai-save">Turn on</button></div>
+      <label class="check"><input type="checkbox" id="xai-remember"><span>Remember on this device. Leave this off on a shared computer: the key is then forgotten when you close the tab.</span></label>`}
   </div>`;
 }
 function extractJSON(text){
@@ -1330,8 +1353,53 @@ function importGrok(src, missionId = mission){
   changed({full:!typingInView()});
 }
 
+/* ---------- Live mode: xAI Responses API straight from the browser, with the viewer's own key ---------- */
+const XAI_MODEL = "grok-4.7";
+const XAI_SYSTEM = `You are GrokBot, a VA disability claim strategist working for a U.S. veteran.
+Rules that override anything else in the request:
+- Help the veteran document REAL symptoms completely and accurately. Never suggest exaggerating, inventing, or coaching symptoms, events, or dates they don't have. Overstating is fraud and sinks claims.
+- Statement drafts use only facts in the case file; write [FILL IN] for anything missing.
+- Ground rating advice in 38 CFR Part 4 and current VA rules. Use web and X search for anything recent and put a real https source URL in each play's "source" ("" if none).
+- Prefer free accredited help (VSOs) over paid consultants.
+- Reply with one JSON object: {"plays": [...], "statements": [...], "exam_questions": [...]}. Use an empty array for anything the mission doesn't call for.`;
+const XS = {type:"string"};
+const XAI_SCHEMA = {type:"object", additionalProperties:false, required:["plays","statements","exam_questions"], properties:{
+  plays:{type:"array", items:{type:"object", additionalProperties:false, required:["title","why","action","impact","confidence","confidence_why","applies_to","source"],
+    properties:{title:XS, why:XS, action:XS, impact:{type:"string", enum:["high","medium","low"]}, confidence:{type:"integer"}, confidence_why:XS, applies_to:{type:"array", items:XS}, source:XS}}},
+  statements:{type:"array", items:{type:"object", additionalProperties:false, required:["condition","draft"], properties:{condition:XS, draft:XS}}},
+  exam_questions:{type:"array", items:{type:"object", additionalProperties:false, required:["condition","question","tip"], properties:{condition:XS, question:XS, tip:XS}}}}};
+async function xaiPost(body){
+  const ctl = new AbortController(); const timer = setTimeout(()=>ctl.abort(), 180000);
+  try{
+    const res = await fetch("https://api.x.ai/v1/responses", {method:"POST", headers:{"Content-Type":"application/json", "Authorization":"Bearer "+xaiKey}, body:JSON.stringify(body), signal:ctl.signal});
+    let json = null; try{ json = await res.json(); }catch(_){}
+    return {status:res.status, ok:res.ok, json};
+  }catch(e){
+    throw {code:"xai", message: e && e.name==="AbortError" ? "Grok didn't answer within 3 minutes. Try again, or pick a narrower mission." : "Couldn't reach xAI. Check your internet connection and try again."};
+  }finally{ clearTimeout(timer); }
+}
+async function askXai(missionText, cf){
+  const base = {model:XAI_MODEL, input:[{role:"system", content:XAI_SYSTEM}, {role:"user", content:missionText+"\n\nCASE FILE\n"+JSON.stringify(cf, null, 2)}],
+    tools:[{type:"web_search"}, {type:"x_search"}], store:false};
+  let r = await xaiPost(Object.assign({max_turns:8, text:{format:{type:"json_schema", name:"grokbot_reply", schema:XAI_SCHEMA, strict:true}}}, base));
+  if (r.status===400 || r.status===422) r = await xaiPost(base); /* some models refuse structured output with tools; the brief already asks for JSON */
+  if (!r.ok){
+    const er = r.json && (r.json.error || r.json.message);
+    const detail = clip(typeof er==="string" ? er : (er && er.message) || "", 300);
+    throw {code:"xai", message:
+      r.status===401 || r.status===403 || /api key/i.test(detail) ? "xAI rejected your API key. Forget it in Live mode and add it again."
+      : r.status===404 ? "xAI doesn't offer the model "+XAI_MODEL+" to your account."
+      : r.status===429 ? "xAI says slow down, or your account is out of credits."
+      : ("xAI returned an error (HTTP "+r.status+"). "+detail).trim()};
+  }
+  const j = r.json || {};
+  return typeof j.output_text==="string" ? j.output_text
+    : (j.output||[]).filter(i=>i && i.type==="message").flatMap(i=>i.content||[]).filter(c=>c && c.type==="output_text").map(c=>c.text).join("\n");
+}
+
 function grokRunError(e){
   const code = e && e.code;
+  if (code==="xai") return e.message;
   if (code==="server_not_connected") return "GrokBot's local server isn't connected here. Run missions from the Claude desktop app with the grokbot server added to its MCP config, or use copy and paste.";
   if (code==="cancelled") return "Run cancelled in the Claude app. Nothing was sent to Grok.";
   if (code==="approval_required") return "Running a mission needs your approval in the Claude app. Click Run mission again and allow it.";
@@ -1343,15 +1411,21 @@ function grokRunError(e){
   return "GrokBot couldn't run" + (code ? " ("+code+")" : "") + ". Try again, or use copy and paste.";
 }
 async function runGrok(){
-  if (!grokMcp || grokBusy) return;
+  const viaKey = !grokMcp && STATIC_SITE && !!xaiKey;
+  if ((!grokMcp && !viaKey) || grokBusy) return;
+  if (mission==="custom" && !customMission.trim()){ grokMsg = {ok:false, where:"run", text:"Type your mission in the box first."}; renderView(); return; }
   const missionId = mission;
   grokBusy = true;
   grokMsg = {ok:true, where:"run", text:"GrokBot is on it. Live X and web search can take a minute or two; you can keep working in other tabs."};
   renderView();
   try{
-    const res = await grokMcp.callTool(GROK_SERVER, "ask_grok", {mission:grokBrief(false), case_file:caseFile()}, {cache:false});
+    let reply;
+    if (grokMcp){
+      const res = await grokMcp.callTool(GROK_SERVER, "ask_grok", {mission:grokBrief(false), case_file:caseFile()}, {cache:false});
+      reply = res && res.payload!==undefined ? res.payload : (res&&res.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+    } else reply = await askXai(grokBrief(false), caseFile());
     grokBusy = false;
-    importGrok(res && res.payload!==undefined ? res.payload : (res&&res.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n"), missionId);
+    importGrok(reply, missionId);
   }catch(e){
     grokBusy = false;
     grokMsg = {ok:false, where:"run", text:grokRunError(e)};
@@ -1416,6 +1490,25 @@ document.addEventListener("click", async e=>{
   }
   if (act==="grok-import"){ importGrok(); return; }
   if (act==="grok-run"){ runGrok(); return; }
+  if (act==="grok-send"){ /* no preventDefault: the link itself opens Grok in a new tab */
+    const note = document.getElementById("copy-note");
+    const say = t => { if (note) note.textContent = t; };
+    if (navigator.clipboard) navigator.clipboard.writeText(grokBrief()).then(()=>say("Brief copied. Paste it into Grok and send."), ()=>say("Couldn't copy automatically. Use Copy brief, then paste it into Grok."));
+    else say("Use Copy brief, then paste it into Grok.");
+    return;
+  }
+  if (act==="xai-save"){
+    const inp = document.getElementById("xai-key"); const v = (inp && inp.value || "").trim();
+    if (!v){ if (inp) inp.focus(); return; }
+    const remember = document.getElementById("xai-remember").checked;
+    try{ sessionStorage.setItem(XAI_KEY_ITEM, v); if (remember) localStorage.setItem(XAI_KEY_ITEM, v); else localStorage.removeItem(XAI_KEY_ITEM); }catch(_){}
+    xaiKey = v; grokMsg = {ok:true, where:"run", text:"Live mode is on. Pick a mission and click Run mission."};
+    renderView(); return;
+  }
+  if (act==="xai-forget"){
+    try{ sessionStorage.removeItem(XAI_KEY_ITEM); localStorage.removeItem(XAI_KEY_ITEM); }catch(_){}
+    xaiKey = ""; grokMsg = null; renderView(); return;
+  }
 });
 document.addEventListener("keydown", e=>{
   if ((e.key==="Enter"||e.key===" ") && e.target.matches(".card-head")){ e.preventDefault(); e.target.click(); }
@@ -1436,6 +1529,7 @@ document.addEventListener("change", e=>{
 });
 document.addEventListener("input", e=>{
   const el = e.target;
+  if (el.id==="custom-mission"){ customMission = el.value.slice(0,2000); const b = document.getElementById("grok-brief"); if (b) b.value = grokBrief(); return; }
   if (el.dataset.bind==="dep" && el.tagName==="INPUT"){ state.profile.deployments[+el.dataset.i][el.dataset.k] = el.value.slice(0,12); changed(); return; }
   if (el.dataset.cond && el.dataset.f==="notes"){ const c = state.conditions.find(c=>c.uid===el.dataset.cond); if (c){ c.notes = el.value.slice(0,6000); changed(); } }
 });
