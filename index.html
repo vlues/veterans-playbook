@@ -1,0 +1,1446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Veterans Playbook</title>
+<meta name="description" content="VA disability claim planner for separating service members: rating math, BDD clock, evidence checklists, and C&amp;P exam prep. Accuracy first.">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&family=Saira+Stencil+One&display=swap">
+<style>
+/* Layout: field-manual binder. A readout strip carries the VA math up top, tabbed sections below, cards only where the veteran's own records live. */
+:root{
+  --paper:#ECEEE6; --sheet:#F8F9F3; --ink:#1B221D; --ink-2:#535D52; --rule:#C8CDBF;
+  --od:#55642F; --od-soft:#E0E5D0; --signal:#C24714; --signal-soft:#F5DED0;
+  --good:#2D7743; --warn:#9C6410; --bad:#AE3427;
+  --display:"Saira Stencil One","Arial Narrow",Impact,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F130E; --sheet:#171C15; --ink:#E3E8DA; --ink-2:#A1AB99; --rule:#2D3529;
+    --od:#A6BA74; --od-soft:#232B1C; --signal:#FF7B44; --signal-soft:#3A2216;
+    --good:#63C380; --warn:#E3AA50; --bad:#F27461; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F130E; --sheet:#171C15; --ink:#E3E8DA; --ink-2:#A1AB99; --rule:#2D3529;
+  --od:#A6BA74; --od-soft:#232B1C; --signal:#FF7B44; --signal-soft:#3A2216;
+  --good:#63C380; --warn:#E3AA50; --bad:#F27461; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--signal)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.mono{font-family:var(--mono)}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2)}
+.muted{color:var(--ink-2)}
+.num{font-variant-numeric:tabular-nums}
+
+/* masthead */
+.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,6vw,52px);line-height:.95;letter-spacing:.01em}
+.brand .sub{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.mast-right{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border:1px solid var(--rule);border-radius:999px;background:var(--sheet);color:var(--ink-2);white-space:nowrap}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-2)}
+.chip.ok .dot{background:var(--good)} .chip.busy .dot{background:var(--warn)} .chip.off .dot{background:var(--bad)}
+
+/* readout */
+.readout{display:grid;grid-template-columns:1.1fr 1.1fr 1fr 1.2fr;gap:0;border-bottom:1px solid var(--rule);margin-bottom:6px}
+.cell{padding:18px 18px 16px 0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.cell + .cell{padding-left:18px;border-left:1px solid var(--rule)}
+.big{font-family:var(--display);font-size:clamp(52px,8vw,76px);line-height:.9;font-variant-numeric:tabular-nums}
+.big small{font-size:.42em;margin-left:2px}
+.big.target{color:var(--signal)}
+.chain{font-family:var(--mono);font-size:12px;color:var(--ink-2);overflow-wrap:anywhere}
+.money{font-family:var(--display);font-size:clamp(30px,4.4vw,40px);line-height:1}
+.money-sub{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.clock{font-size:14px;line-height:1.45}
+.clock strong{font-family:var(--display);font-weight:400;font-size:30px;line-height:1;display:block}
+.clock .state{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:3px;display:inline-block;margin-top:2px}
+.state.open{background:var(--signal);color:var(--sheet)}
+.state.wait{background:var(--od-soft);color:var(--od)}
+.state.late{background:var(--signal-soft);color:var(--signal)}
+
+/* tabs */
+.tabs{display:flex;flex-wrap:wrap;gap:2px 4px;margin:14px 0 22px;border-bottom:1px solid var(--rule)}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 9px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:-1px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--signal);font-weight:600}
+.badge{background:var(--signal);color:var(--sheet);border-radius:999px;font-size:10px;padding:1px 6px;letter-spacing:0}
+
+/* generic */
+.section{display:flex;flex-direction:column;gap:18px}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px}
+.sec-head h2{font-family:var(--display);font-weight:400;font-size:28px;line-height:1}
+.sec-head p{max-width:62ch}
+.lede{max-width:66ch;color:var(--ink-2)}
+.panel{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:18px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink);background:var(--ink);color:var(--sheet);border-radius:4px;padding:8px 13px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--signal);border-color:var(--signal)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.btn.ghost:hover{border-color:var(--ink);background:transparent;color:var(--ink)}
+.btn.sm{padding:5px 9px;font-size:11px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field input,.field select,.field textarea,select.inline{background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:8px 10px;width:100%}
+.field textarea{min-height:110px;resize:vertical;line-height:1.5}
+.check{display:flex;gap:9px;align-items:flex-start;cursor:pointer;padding:3px 0}
+.check input{margin-top:3px;accent-color:var(--od);width:16px;height:16px;flex:none}
+.note{font-size:13px;color:var(--ink-2)}
+.empty{border:1px dashed var(--rule);border-radius:var(--r);padding:22px;color:var(--ink-2);text-align:left}
+.banner{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;border:1px solid var(--signal);background:var(--signal-soft);border-radius:var(--r);padding:12px 16px}
+.banner p{max-width:70ch}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:3px;white-space:nowrap;border:1px solid currentColor}
+.pill.good{color:var(--good)} .pill.warn{color:var(--warn)} .pill.bad{color:var(--bad)} .pill.od{color:var(--od)} .pill.sig{color:var(--signal)}
+
+/* profile + timeline */
+.profile{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 16px}
+.profile .wide{grid-column:span 2}
+.deps{display:flex;flex-direction:column;gap:8px}
+.dep{display:grid;grid-template-columns:28px minmax(0,1fr) 92px auto;gap:8px;align-items:center}
+.dep .n{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.dep .flags{grid-column:2 / -1;display:flex;gap:6px;flex-wrap:wrap;margin-top:-2px}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin-top:4px}
+.ms{position:relative;padding:22px 10px 0 0;border-top:2px solid var(--rule)}
+.ms::before{content:"";position:absolute;top:-7px;left:0;width:12px;height:12px;border-radius:50%;background:var(--sheet);border:2px solid var(--ink-2)}
+.ms.past{border-top-color:var(--od)} .ms.past::before{background:var(--od);border-color:var(--od)}
+.ms.now::before{background:var(--signal);border-color:var(--signal);box-shadow:0 0 0 4px var(--signal-soft)}
+.ms .d{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.ms .t{font-weight:600;font-size:14px;line-height:1.3;margin-top:2px}
+.ms .x{font-size:12.5px;color:var(--ink-2);margin-top:3px}
+
+/* plays */
+.phase{display:flex;flex-direction:column;gap:10px}
+.phase-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid var(--rule);padding-bottom:6px}
+.phase-head h3{font-family:var(--mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+.prog{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.prog i{display:block;width:90px;height:5px;background:var(--rule);border-radius:3px;overflow:hidden}
+.prog i b{display:block;height:100%;background:var(--od)}
+.play{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 14px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.play:last-child{border-bottom:0}
+.play .status{display:flex;flex-direction:column;gap:4px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:4px 8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);cursor:pointer}
+.seg button + button{border-left:1px solid var(--rule)}
+.seg button.on{background:var(--ink);color:var(--sheet)}
+.seg button.on.done{background:var(--od);color:var(--sheet)}
+.play h4{margin:0;font-size:15.5px;line-height:1.35}
+.play.done h4{text-decoration:line-through;text-decoration-color:var(--ink-2);color:var(--ink-2)}
+.play .why{font-size:14px;color:var(--ink-2);margin-top:2px;max-width:70ch}
+.play details{margin-top:6px}
+.play summary{cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--od)}
+.play ol,.play ul{margin:8px 0 0;padding-left:20px;max-width:72ch}
+.play li{margin:3px 0}
+.forms{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.form-tag{font-family:var(--mono);font-size:11px;padding:2px 6px;background:var(--od-soft);color:var(--od);border-radius:3px}
+.due{text-align:right;font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
+.due.hot{color:var(--signal);font-weight:600}
+
+/* claims */
+.report-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet)}
+table.report{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+.report th{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);text-align:left;font-weight:500;padding:10px 12px;border-bottom:1px solid var(--rule)}
+.report td{padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:middle}
+.report tr:last-child td{border-bottom:0}
+.report td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.report .cname{font-weight:600}
+.report .cname small{display:block;font-weight:400;font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+.meter{display:flex;align-items:center;gap:8px;min-width:120px}
+.meter i{flex:1;height:6px;background:var(--rule);border-radius:3px;overflow:hidden;min-width:60px}
+.meter i b{display:block;height:100%}
+.meter span{font-family:var(--mono);font-size:12px;width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.lv-good b{background:var(--good)} .lv-warn b{background:var(--warn)} .lv-bad b{background:var(--bad)}
+.cards{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r)}
+.card-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;padding:14px 16px;align-items:center;cursor:pointer}
+.card-head h3{font-size:17px;line-height:1.25}
+.card-head .meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:4px}
+.card-head .scores{display:flex;gap:14px;align-items:center}
+.score{display:flex;flex-direction:column;align-items:flex-end;gap:0}
+.score b{font-family:var(--display);font-weight:400;font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.score span{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2)}
+.chev{font-family:var(--mono);color:var(--ink-2);font-size:14px;transition:transform .15s}
+.card.open .chev{transform:rotate(90deg)}
+.card-body{border-top:1px solid var(--rule);padding:16px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px}
+.tiers{display:flex;flex-direction:column;gap:6px}
+.tier{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;align-items:start;padding:8px 10px;border:1px solid var(--rule);border-radius:4px;cursor:pointer;background:var(--paper)}
+.tier:hover{border-color:var(--ink-2)}
+.tier.sel{border-color:var(--signal);background:var(--signal-soft)}
+.tier .p{font-family:var(--display);font-size:22px;line-height:1}
+.tier .d{font-size:13.5px;line-height:1.45}
+.tier{position:relative}
+.tier:focus-within{outline:2px solid var(--signal);outline-offset:1px}
+.tier input{position:absolute;opacity:0;pointer-events:none}
+.sub-h{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);margin:0 0 6px}
+.blk{display:flex;flex-direction:column;gap:4px}
+.say{background:var(--paper);border-left:3px solid var(--od);padding:10px 12px;border-radius:0 4px 4px 0;font-size:14px}
+.say p + p{margin-top:6px}
+.next{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--rule);border-radius:4px;background:var(--paper);font-size:14px}
+.next .label{flex:none;padding-top:2px;color:var(--signal)}
+.pres{font-size:13.5px;padding:8px 10px;border-radius:4px;background:var(--od-soft);color:var(--ink)}
+.pres b{color:var(--od)}
+.add-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.sec-links{display:flex;flex-wrap:wrap;gap:6px}
+.link-btn{background:none;border:1px dashed var(--rule);border-radius:3px;padding:2px 7px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.link-btn:hover{border-color:var(--od);color:var(--od)}
+
+/* scout */
+.feed{display:flex;flex-direction:column;gap:0;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r)}
+.intel{display:grid;grid-template-columns:96px minmax(0,1fr);gap:6px 18px;padding:16px;border-bottom:1px solid var(--rule)}
+.intel:last-child{border-bottom:0}
+.intel .when{font-family:var(--mono);font-size:12px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+.intel h4{margin:0;font-size:16px;line-height:1.35}
+.intel .act{margin-top:6px;font-size:14px}
+.intel .act b{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--signal);margin-right:6px}
+.intel .foot{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:10px;font-size:13px}
+.intel.dim{opacity:.55}
+.conf{font-family:var(--mono);font-size:12px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.fbtn{border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:4px 11px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--ink-2)}
+.fbtn.on{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.new-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--signal);margin-right:6px;vertical-align:middle}
+
+/* prep */
+.rules{counter-reset:r;display:flex;flex-direction:column;gap:0}
+.rule{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.rule:last-child{border-bottom:0}
+.rule::before{counter-increment:r;content:counter(r,decimal-leading-zero);font-family:var(--display);font-size:24px;line-height:1;color:var(--signal)}
+.rule h4{margin:0 0 2px;font-size:15.5px}
+.rule p{font-size:14px;color:var(--ink-2);max-width:68ch}
+.cheat{display:flex;flex-direction:column;gap:12px}
+.cheat-item{border:1px solid var(--rule);border-radius:var(--r);background:var(--sheet);padding:14px 16px}
+.cheat-item h4{margin:0 0 4px;font-size:15.5px}
+.cheat-item pre{white-space:pre-wrap;font-family:var(--body);font-size:14px;margin:8px 0 0;background:var(--paper);padding:10px 12px;border-radius:4px}
+
+/* grok */
+.steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.step-n{font-family:var(--display);font-size:42px;line-height:.9;color:var(--signal)}
+.missions{display:flex;flex-direction:column;gap:6px}
+.mission{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--rule);border-radius:4px;cursor:pointer;background:var(--paper)}
+.mission.sel{border-color:var(--signal);background:var(--signal-soft)}
+.mission input{margin-top:4px;accent-color:var(--signal)}
+.mission b{display:block;font-size:14.5px}
+.mission span{font-size:13px;color:var(--ink-2)}
+.brief{width:100%;min-height:220px;font-family:var(--mono);font-size:12px;line-height:1.5;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px;resize:vertical}
+.paste{width:100%;min-height:160px;font-family:var(--mono);font-size:12px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px;resize:vertical}
+.msg{font-size:13.5px;padding:8px 10px;border-radius:4px}
+.msg.ok{background:var(--od-soft);color:var(--ink)} .msg.err{background:var(--signal-soft);color:var(--ink)}
+.history{display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.history div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--rule);padding:6px 0}
+.code{font-family:var(--mono);font-size:12px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px;overflow-x:auto;white-space:pre;margin:0}
+
+footer{margin-top:40px;border-top:2px solid var(--ink);padding-top:14px;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;font-size:13px;color:var(--ink-2)}
+footer strong{color:var(--ink)}
+.crisis{border:1px solid var(--rule);border-radius:var(--r);padding:10px 12px;background:var(--sheet)}
+.crisis b{font-family:var(--display);font-weight:400;font-size:22px;color:var(--ink);display:block;line-height:1.1}
+
+@media (max-width:900px){
+  .readout{grid-template-columns:1fr 1fr}
+  .cell:nth-child(3){padding-left:0;border-left:0}
+  .cell:nth-child(n+3){border-top:1px solid var(--rule)}
+  .profile{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card-body{grid-template-columns:minmax(0,1fr)}
+  .timeline{grid-template-columns:minmax(0,1fr);gap:0}
+  .ms{border-top:0;border-left:2px solid var(--rule);padding:0 0 14px 18px}
+  .ms::before{top:2px;left:-7px}
+  .ms.past{border-left-color:var(--od)}
+  .steps,.grid2{grid-template-columns:minmax(0,1fr)}
+  footer{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  .readout{grid-template-columns:minmax(0,1fr)}
+  .cell + .cell{padding-left:0;border-left:0;border-top:1px solid var(--rule)}
+  .profile{grid-template-columns:minmax(0,1fr)}
+  .profile .wide{grid-column:auto}
+  .play{grid-template-columns:minmax(0,1fr)}
+  .due{text-align:left}
+  .card-head{grid-template-columns:minmax(0,1fr)}
+  .card-head .scores{justify-content:flex-start}
+  .score{align-items:flex-start}
+  .intel{grid-template-columns:minmax(0,1fr)}
+  .intel .when{flex-direction:row;gap:10px;flex-wrap:wrap}
+  .dep{grid-template-columns:22px minmax(0,1fr) 74px auto}
+  .tab{padding:9px 8px;font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="brand">
+      <h1>Veterans Playbook</h1>
+      <span class="sub">VA disability claim planner · 38 CFR Part 4 · rates eff. Dec 1, 2025</span>
+    </div>
+    <div class="mast-right">
+      <span class="chip" id="saveChip"><span class="dot"></span><span id="saveText">Loading</span></span>
+      <span class="chip" id="scoutChip"><span class="dot"></span><span id="scoutText">Scout: waiting</span></span>
+    </div>
+  </header>
+
+  <section class="readout" id="readout" aria-label="Rating readout"></section>
+
+  <nav class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" data-act="tab" data-tab="plan" id="tab-plan">Game plan</button>
+    <button class="tab" role="tab" data-act="tab" data-tab="claims" id="tab-claims">Claims &amp; confidence</button>
+    <button class="tab" role="tab" data-act="tab" data-tab="scout" id="tab-scout">Scout <span class="badge" id="scoutBadge" hidden></span></button>
+    <button class="tab" role="tab" data-act="tab" data-tab="prep" id="tab-prep">C&amp;P exam prep</button>
+    <button class="tab" role="tab" data-act="tab" data-tab="grok" id="tab-grok">GrokBot</button>
+  </nav>
+
+  <main id="view" role="tabpanel"></main>
+
+  <footer>
+    <div>
+      <p><strong>Accuracy is the play.</strong> Every line here is about getting each real symptom on the record, completely. Overstating symptoms is fraud, examiners test for it, and it can sink the whole claim. Understating costs you money.</p>
+      <p style="margin-top:8px">Not legal or medical advice. Ratings here are plain-English summaries of 38 CFR Part 4; the VA decides. Free accredited help: DAV, VFW, American Legion, your state VSO, or an accredited attorney or agent (check accreditation at va.gov/ogc/apps/accreditation). Nobody can legally charge you to file your initial claim.</p>
+    </div>
+    <div class="crisis">
+      <span class="label">Veterans Crisis Line · 24/7</span>
+      <b>Dial 988, then press 1</b>
+      <span>Text 838255. Free, confidential, no enrollment needed.</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   REFERENCE DATA
+   ============================================================ */
+const RATES = {0:0,10:180.42,20:356.66,30:552.47,40:795.84,50:1132.90,60:1435.02,70:1808.45,80:2102.15,90:2362.30,100:3938.58};
+const SMCK = 139.87;
+
+const PACT_LOCS = ["Afghanistan","Bahrain","Djibouti","Egypt","Iraq","Jordan","Kuwait","Lebanon","Oman","Qatar","Saudi Arabia","Somalia","Syria","United Arab Emirates","Uzbekistan","Yemen"];
+const GULF_LOCS = ["Afghanistan","Bahrain","Egypt","Iraq","Israel","Jordan","Kuwait","Oman","Qatar","Saudi Arabia","Syria","Turkey","United Arab Emirates"];
+const LOCS = ["Afghanistan","Iraq","Kuwait","Syria","Jordan","Saudi Arabia","Qatar","United Arab Emirates","Bahrain","Oman","Djibouti","Somalia","Yemen","Egypt","Lebanon","Uzbekistan","Turkey","Israel","Kosovo / Balkans","Africa (other)","Europe","Korea","Pacific / Guam","At sea","Other"];
+const BRANCHES = ["Army","Marine Corps","Navy","Air Force","Space Force","Coast Guard","National Guard","Reserve"];
+
+const SIDES = [["","No side"],["left-leg","Left leg / foot"],["right-leg","Right leg / foot"],["left-arm","Left arm / hand"],["right-arm","Right arm / hand"],["both","Both sides, one rating"]];
+
+/* pres: pact / gulf = legal presumption (service + nexus). combat, noise, blast = record that supports the in-service event. */
+const LIB = [
+{id:"ptsd",name:"PTSD / mental health",sys:"Mental health",dc:"DC 9411",cfr:"38 CFR 4.130",pres:"combat",
+ measures:"How symptoms hit work and relationships: panic frequency, sleep, mood, memory, irritability, self-care, suicidal thoughts.",
+ tiers:[[0,"Diagnosed, but symptoms don't affect work or social life and no continuous medication."],
+  [10,"Mild or brief symptoms that hurt work efficiency only under significant stress, or controlled by continuous medication."],
+  [30,"Occasional drops in work efficiency. Depressed mood, anxiety, suspiciousness, panic attacks weekly or less, chronic sleep problems, mild memory loss."],
+  [50,"Reduced reliability and productivity. Panic attacks more than once a week, trouble with complex tasks, impaired judgment, mood and motivation problems, hard to keep work and social relationships."],
+  [70,"Problems in most areas: work, family, judgment, thinking, mood. Suicidal thoughts, near-constant panic or depression, irritability with violence, neglected hygiene, can't keep effective relationships."],
+  [100,"Total occupational and social impairment: gross impairment in thought, persistent delusions or hallucinations, persistent danger to self or others, can't handle daily living."]],
+ evidence:["Diagnosis from a psychiatrist, psychologist, or behavioral health provider","Stressor statement on VA Form 21-0781","Deployment orders, combat award, and your Post-Deployment Health Assessments (DD 2796 / DD 2900)","Statements from spouse, family, or teammates on how you changed"],
+ say:["Since my deployments I have ___ (nightmares / panic attacks / flashbacks) about ___ times a week.","I sleep about ___ hours a night and wake up ___ times.","At work it shows up as ___ (missed days, conflicts, can't focus, mistakes).","At home: ___ (I isolate, I snap at my family, I avoid crowds or driving).","On my worst days I ___."],
+ avoid:["Saying \"I'm fine\" out of habit","Describing only a good week","Leaving out family and relationship impact"],
+ note:"You get one mental health rating. PTSD, depression, anxiety, and insomnia roll into it. Combat veterans can establish the stressor with their own statement (38 CFR 3.304(f)). If you've had thoughts of suicide, say so: it is a rating criterion and it gets you help.",
+ sec:["osa","ed","gerd","ibs","htn","migraine"]},
+{id:"tinnitus",name:"Tinnitus",sys:"Ear",dc:"DC 6260",cfr:"38 CFR 4.87",pres:"noise",lay:true,
+ measures:"Whether ringing is recurrent and when it started. The examiner can't measure it; your report is the evidence.",
+ tiers:[[10,"Recurrent tinnitus. One 10% rating covers both ears. This is the maximum."]],
+ evidence:["Your own statement of when it started (you can report it yourself)","Noise exposure: MOS, weapons, aircraft, generators, blasts","Hearing conservation records (DD 2215 / DD 2216)"],
+ say:["The ringing started during/after ___ (deployment, range, blast) in ___ (year).","It is ___ (constant / comes and goes) and has been since service.","It's worst when ___ and it affects my ___ (sleep, focus)."],
+ avoid:["Saying it started after you got out if it didn't","Calling it \"rare\" when it's recurrent"],
+ note:"VA has proposed folding tinnitus into the underlying ear condition and ending the standalone 10%. As of Oct 2026 it is still proposed. If you have it, claim it now; existing ratings are protected.",
+ sec:["hearing","migraine","ptsd"]},
+{id:"hearing",name:"Hearing loss",sys:"Ear",dc:"DC 6100",cfr:"38 CFR 4.85",pres:"noise",
+ measures:"Puretone thresholds and Maryland CNC speech recognition in a sound booth, plus how hearing affects daily life.",
+ tiers:[[0,"Measurable loss that doesn't hit a compensable level. Still worth connecting: VA hearing aids and care."],[10,"Typically moderate loss in both ears."],[20,"Moderately severe loss or poor speech recognition."],[30,"Severe loss in both ears."]],
+ evidence:["Entrance vs. separation audiograms showing a threshold shift","Hearing conservation records","Noise exposure history"],
+ say:["I ask people to repeat themselves ___ times a day.","I can't follow conversations in ___ (restaurants, groups, the truck).","I keep the TV at ___ and my family complains."],
+ avoid:["Skipping the functional impact: the examiner must describe it"],
+ note:"Get a full audiogram at your separation exam. A documented shift from entrance makes this easy.",
+ sec:["tinnitus"]},
+{id:"back",name:"Lower back (thoracolumbar)",sys:"Spine",dc:"DC 5237 / 5242 / 5243",cfr:"38 CFR 4.71a",pres:null,
+ measures:"Forward flexion and combined range of motion with a goniometer, pain on motion, flare-ups, repetitive use, spasm, gait.",
+ tiers:[[10,"Forward flexion over 60° up to 85°, or spasm/guarding that doesn't change your gait."],
+  [20,"Forward flexion over 30° up to 60°, or combined motion 120° or less, or spasm/guarding that causes an abnormal gait or spine shape."],
+  [40,"Forward flexion 30° or less, or favorable ankylosis of the thoracolumbar spine."],
+  [50,"Unfavorable ankylosis of the entire thoracolumbar spine."],
+  [100,"Unfavorable ankylosis of the entire spine."]],
+ evidence:["Sick call, PT, chiropractic, or ER visits for back pain in your STRs","X-ray or MRI","Profiles or limited-duty chits","Notes on rucking, body armor, airborne ops, vehicle jolts"],
+ say:["When you measure me, I'll tell you exactly where the pain starts.","Flare-ups happen about ___ times a month, last ___, and during one I can only ___.","I can sit ___ minutes, stand ___ minutes, and lift about ___ lbs before I have to stop.","Today I took ___. Without it, my back is ___."],
+ avoid:["Pushing past the pain on range-of-motion tests","Not mentioning flare-ups because you're not in one today"],
+ note:"If a doctor ever prescribed bed rest for a disc problem (IVDS), VA can rate by incapacitating episodes instead: 6+ weeks in a year is 60%. Nerve pain into a leg is rated separately as radiculopathy.",
+ sec:["radic","knee","hip","ed"]},
+{id:"radic",name:"Radiculopathy (sciatic nerve)",sys:"Nerves",dc:"DC 8520",cfr:"38 CFR 4.124a",pres:null,limb:"leg",
+ measures:"Sensation, reflexes, strength, muscle atrophy; sometimes EMG or nerve conduction tests. Each leg is rated on its own.",
+ tiers:[[10,"Mild incomplete paralysis: numbness, tingling, or pain down the leg."],[20,"Moderate incomplete paralysis."],[40,"Moderately severe incomplete paralysis."],[60,"Severe, with marked muscle atrophy."],[80,"Complete paralysis of the sciatic nerve."]],
+ evidence:["Exam findings: straight-leg raise, reflexes, sensation","MRI showing nerve root involvement","EMG / nerve conduction study"],
+ say:["Pain or numbness runs from my back down to my ___ about ___ times a day.","My ___ leg gives out or goes numb when I ___."],
+ avoid:["Forgetting to name which leg, or both"],
+ note:"Usually claimed secondary to the back. Both legs rated means the bilateral factor applies and boosts your combined rating.",
+ sec:[]},
+{id:"neck",name:"Neck (cervical spine)",sys:"Spine",dc:"DC 5237 / 5242",cfr:"38 CFR 4.71a",pres:null,
+ measures:"Forward flexion and combined range of motion, pain on motion, flare-ups.",
+ tiers:[[10,"Forward flexion over 30° up to 40°, or combined motion over 170° up to 335°, or spasm that doesn't change your gait."],[20,"Forward flexion over 15° up to 30°, or combined motion 170° or less, or spasm causing abnormal posture."],[30,"Forward flexion 15° or less, or favorable ankylosis of the cervical spine."],[40,"Unfavorable ankylosis of the entire cervical spine."]],
+ evidence:["STR visits for neck pain","Helmet, NVG, and body armor wear history","Imaging"],
+ say:["Turning my head to ___ (check blind spots, look up) hurts at about ___.","Flare-ups happen ___ times a month and last ___."],
+ avoid:["Pushing past the pain on motion tests"],
+ note:"Years of helmet and plate carrier wear across deployments is a common, documented cause.",
+ sec:["migraine","carpal"]},
+{id:"knee",name:"Knee",sys:"Joints",dc:"DC 5260 / 5261 / 5257",cfr:"38 CFR 4.71a",pres:null,limb:"leg",
+ measures:"Flexion and extension in degrees, pain on motion, stability tests, meniscus symptoms, flare-ups, use of a brace or cane.",
+ tiers:[[10,"Painful motion, or flexion limited to 45°, or extension limited to 10°, or slight instability."],[20,"Flexion limited to 30°, or extension limited to 15°, or moderate instability, or a torn meniscus with locking and swelling."],[30,"Flexion limited to 15°, or extension limited to 20°, or severe instability needing a brace and assistive device."]],
+ evidence:["STR visits, profiles, or brace issued","MRI or X-ray","Airborne, rucking, or ruck-march injury notes"],
+ say:["I can't kneel or squat for more than ___.","Stairs: ___. My knee gives out about ___ times a week.","I wear a ___ (brace / sleeve) when ___."],
+ avoid:["Pushing past the pain on flexion tests"],
+ note:"Flexion, extension, and instability can each be rated separately on the same knee. Pick the side so the bilateral factor counts.",
+ sec:["hip","back"]},
+{id:"hip",name:"Hip",sys:"Joints",dc:"DC 5252",cfr:"38 CFR 4.71a",pres:null,limb:"leg",
+ measures:"Flexion, extension, abduction in degrees, pain on motion, flare-ups.",
+ tiers:[[10,"Flexion limited to 45°, or painful motion."],[20,"Flexion limited to 30°."],[30,"Flexion limited to 20°."],[40,"Flexion limited to 10°."]],
+ evidence:["STR visits","Imaging","Gait changes from a knee or back condition (for secondary)"],
+ say:["Getting in and out of a vehicle hurts at ___.","I can walk about ___ before I have to stop."],
+ avoid:[],note:"Often secondary to an altered gait from a knee or back condition.",sec:["back"]},
+{id:"shoulder",name:"Shoulder",sys:"Joints",dc:"DC 5201",cfr:"38 CFR 4.71a",pres:null,limb:"arm",
+ measures:"How high you can raise the arm (flexion and abduction), pain on motion, flare-ups. Dominant arm rates higher.",
+ tiers:[[10,"Painful motion."],[20,"Can't raise the arm above shoulder level."],[30,"Dominant arm: can't raise it past midway between side and shoulder (~45°)."],[40,"Dominant arm: limited to 25° from your side."]],
+ evidence:["STR visits, PT, or imaging","Ruck, plate carrier, or weapons-carry injury notes"],
+ say:["I can raise my arm to about ___ before pain starts.","I can't reach overhead to ___."],
+ avoid:["Raising the arm past the point of pain"],
+ note:"Tell the examiner which hand is dominant: the dominant arm gets the higher scale.",sec:["neck"]},
+{id:"ankle",name:"Ankle",sys:"Joints",dc:"DC 5271",cfr:"38 CFR 4.71a",pres:null,limb:"leg",
+ measures:"Dorsiflexion and plantar flexion in degrees, instability, flare-ups.",
+ tiers:[[10,"Moderate limitation of motion, or painful motion."],[20,"Marked limitation of motion."]],
+ evidence:["Sprain or fracture visits in STRs","Imaging"],
+ say:["My ankle rolls about ___ times a month.","Uneven ground: ___."],avoid:[],note:"",sec:["knee"]},
+{id:"plantar",name:"Plantar fasciitis",sys:"Feet",dc:"DC 5269",cfr:"38 CFR 4.71a",pres:null,limb:"leg",
+ measures:"Pain in one or both feet and whether treatment (inserts, injections, surgery) has worked.",
+ tiers:[[10,"One or both feet, responds to treatment."],[20,"One foot, not responsive to treatment."],[30,"Both feet, not responsive to treatment."],[40,"Actual loss of use of the foot."]],
+ evidence:["STR visits and inserts issued","Records of treatments tried: stretching, orthotics, injections, night splints"],
+ say:["The first steps in the morning ___.","I've tried ___ and the pain is still ___."],
+ avoid:["Saying inserts \"fixed it\" if they only help a little"],
+ note:"\"Not responsive\" means symptoms persist despite non-surgical and surgical treatment, or a doctor says you're not a surgical candidate.",sec:["flatfeet","knee"]},
+{id:"flatfeet",name:"Flat feet (pes planus)",sys:"Feet",dc:"DC 5276",cfr:"38 CFR 4.71a",pres:null,
+ measures:"Arch, weight-bearing line, pain on manipulation and use, swelling, calluses, response to orthotics.",
+ tiers:[[0,"Mild, relieved by arch supports."],[10,"Moderate: pain on use, Achilles bowing, one or both feet."],[30,"Severe in both feet: marked deformity, swelling on use, calluses."],[50,"Pronounced in both feet: extreme tenderness, spasm, not improved by orthopedic shoes."]],
+ evidence:["Entrance exam (if it was noted, claim aggravation)","STR visits and orthotics issued"],
+ say:["After ___ hours on my feet, I ___.","Orthotics help ___, but ___."],avoid:[],
+ note:"If flat feet were noted at entry, the claim is that service made them worse (aggravation).",sec:["plantar","knee","back"]},
+{id:"migraine",name:"Migraines / headaches",sys:"Neurological",dc:"DC 8100",cfr:"38 CFR 4.124a",pres:null,
+ measures:"How often you have prostrating attacks (you have to stop and lie down), how long they last, and the effect on work.",
+ tiers:[[0,"Less frequent attacks."],[10,"Prostrating attacks averaging one every 2 months over the last several months."],[30,"Prostrating attacks averaging once a month over the last several months."],[50,"Very frequent, completely prostrating, prolonged attacks causing severe economic inadaptability."]],
+ evidence:["Headache log with dates, duration, and what you had to stop","STR visits, ER visits, prescriptions","Statement from a spouse or coworker"],
+ say:["About ___ times a month I have to stop what I'm doing and lie down in a dark, quiet room for ___ hours.","In the last 3 months I've missed or left work ___ times because of them.","Light, sound, nausea: ___."],
+ avoid:["Saying \"just headaches\"","Leaving out how long you're down"],
+ note:"\"Prostrating\" means you have to stop and lie down. 50% does not require that you're unemployed (Pierce v. Principi).",
+ sec:[]},
+{id:"tbi",name:"Traumatic brain injury (residuals)",sys:"Neurological",dc:"DC 8045",cfr:"38 CFR 4.124a",pres:"blast",
+ measures:"Ten facets: memory/attention, judgment, social interaction, orientation, motor, visual-spatial, subjective symptoms, neurobehavioral, communication, consciousness.",
+ tiers:[[0,"Level 0 in every facet."],[10,"Highest facet at level 1 (mild memory, attention, or headache-type symptoms)."],[40,"Highest facet at level 2."],[70,"Highest facet at level 3."],[100,"Any facet rated total."]],
+ evidence:["Blast or concussion records (MACE screening, Purple Heart, incident reports)","Buddy statements from people who were there","ANAM baseline vs. post-deployment testing"],
+ say:["I was exposed to ___ (IED, breaching, artillery, mortar) in ___ (place, year).","Since then I forget ___ and lose my train of thought ___.","Headaches, dizziness, light sensitivity: ___."],
+ avoid:["Not mentioning repeated low-level blasts (breachers, mortars, artillery)"],
+ note:"The first VA TBI exam must be done by a psychiatrist, physiatrist, neurologist, or neurosurgeon. Overlapping symptoms with PTSD are rated once.",
+ sec:["migraine","ptsd","tinnitus"]},
+{id:"osa",name:"Sleep apnea",sys:"Respiratory",dc:"DC 6847",cfr:"38 CFR 4.97",pres:null,
+ measures:"A sleep study diagnosis and what treatment is required.",
+ tiers:[[0,"Documented sleep-disordered breathing, no symptoms."],[30,"Persistent daytime sleepiness."],[50,"Requires a breathing device such as a CPAP."],[100,"Chronic respiratory failure with CO2 retention, cor pulmonale, or a tracheostomy."]],
+ evidence:["Sleep study (polysomnography) diagnosis","CPAP prescription","Statement from a spouse or roommate who saw snoring or gasping during service"],
+ say:["I was told I stop breathing / snore loudly by ___ during ___ (deployment, barracks).","I use my CPAP ___ nights a week."],
+ avoid:["Waiting until after separation to get a sleep study"],
+ note:"VA proposed in 2022 to rate sleep apnea by how well treatment works, which would cut most CPAP ratings from 50%. As of Oct 2026 it's still proposed: the CPAP 50% rule stands today. Get the sleep study and file before any final rule.",
+ sec:["htn"]},
+{id:"sinusitis",name:"Chronic sinusitis",sys:"Respiratory",dc:"DC 6510–6514",cfr:"38 CFR 4.97",pres:"pact",
+ measures:"How many episodes per year, whether they needed 4–6 weeks of antibiotics, headaches, discharge, crusting.",
+ tiers:[[0,"Detected by imaging only."],[10,"1–2 incapacitating episodes a year needing 4–6 weeks of antibiotics, or 3–6 non-incapacitating episodes."],[30,"3+ incapacitating episodes a year, or more than 6 non-incapacitating episodes."],[50,"After radical surgery with chronic bone infection, or near-constant sinusitis after repeated surgeries."]],
+ evidence:["Diagnosis (ENT or primary care)","Count of sinus infections and antibiotic courses","Burn pit / airborne hazard exposure (PACT presumptive)"],
+ say:["I get about ___ sinus infections a year, with headaches, pain, and ___ discharge.","___ of them needed antibiotics for ___ weeks."],
+ avoid:["Under-counting episodes because you didn't see a doctor for each: log them anyway"],
+ note:"PACT Act presumptive for burn pit and airborne hazard locations. You still need a current diagnosis.",sec:["osa","migraine"]},
+{id:"rhinitis",name:"Chronic rhinitis",sys:"Respiratory",dc:"DC 6522",cfr:"38 CFR 4.97",pres:"pact",
+ measures:"Nasal obstruction percentage on each side and whether polyps are present.",
+ tiers:[[0,"Diagnosed, without significant obstruction."],[10,"No polyps, but more than 50% blockage on both sides or complete blockage on one side."],[30,"With polyps."]],
+ evidence:["Diagnosis","ENT scope showing obstruction or polyps","PACT location"],
+ say:["I can only breathe through ___ side of my nose most days.","It's worse when ___."],avoid:[],
+ note:"PACT Act presumptive. Ask for an ENT exam that measures the obstruction.",sec:["osa","sinusitis"]},
+{id:"asthma",name:"Asthma",sys:"Respiratory",dc:"DC 6602",cfr:"38 CFR 4.97",pres:"pact",
+ measures:"Pulmonary function tests (FEV-1, FEV-1/FVC) and the medication you need.",
+ tiers:[[10,"FEV-1 71–80% predicted, or intermittent inhaler use."],[30,"FEV-1 56–70%, or daily inhaled bronchodilator or anti-inflammatory."],[60,"FEV-1 40–55%, or monthly doctor visits for flare-ups, or 3+ courses of oral steroids a year."],[100,"FEV-1 under 40%, or weekly attacks with respiratory failure, or daily high-dose steroids."]],
+ evidence:["Diagnosis and pulmonary function test","Inhaler prescriptions","PACT location"],
+ say:["I use my ___ inhaler ___ times a day/week.","I've had ___ steroid bursts this year."],avoid:["Doing the PFT on a great day without mentioning flares"],
+ note:"PACT Act presumptive (asthma diagnosed after service counts).",sec:[]},
+{id:"resp",name:"Chronic bronchitis / COPD / constrictive bronchiolitis",sys:"Respiratory",dc:"DC 6600 / 6604",cfr:"38 CFR 4.97",pres:"pact",
+ measures:"Pulmonary function tests: FEV-1, FEV-1/FVC, DLCO.",
+ tiers:[[10,"FEV-1 or FEV-1/FVC 71–80%, or DLCO 66–80%."],[30,"FEV-1 or FEV-1/FVC 56–70%, or DLCO 56–65%."],[60,"FEV-1 or FEV-1/FVC 40–55%, or DLCO 40–55%."],[100,"FEV-1 or FEV-1/FVC under 40%, or DLCO under 40%, or other severe findings."]],
+ evidence:["Diagnosis and PFTs","PACT location"],
+ say:["I get winded after ___ (stairs, a block)."],avoid:[],note:"PACT Act presumptive. Constrictive bronchiolitis often needs a lung biopsy or specialist workup to diagnose.",sec:[]},
+{id:"gerd",name:"GERD / acid reflux",sys:"Digestive",dc:"DC 7206",cfr:"38 CFR 4.114",pres:null,
+ measures:"Since May 2024, GERD is rated as esophageal stricture: swallowing problems and the treatment they need.",
+ tiers:[[0,"Documented, without daily symptoms or daily medication."],[10,"Stricture that needs daily medication to control swallowing problems."],[30,"Recurrent stricture needing dilation up to 2 times a year."],[50,"Stricture needing dilation 3+ times a year, steroid dilation, or a stent."]],
+ evidence:["Diagnosis and daily medication","Endoscopy (EGD) showing stricture","Link to NSAIDs taken for pain, or to PTSD"],
+ say:["I take ___ every day; without it I ___.","Food gets stuck when I swallow about ___."],avoid:[],
+ note:"Without a documented stricture, expect 0–10%. Often claimed secondary to NSAIDs for joint pain or to PTSD.",sec:[]},
+{id:"ibs",name:"Irritable bowel syndrome",sys:"Digestive",dc:"DC 7319",cfr:"38 CFR 4.114",pres:"gulf",
+ measures:"How many days you have abdominal pain tied to bowel movements, over the last 3 months, plus other symptoms.",
+ tiers:[[10,"Pain tied to bowel movements at least 1 day a month over the last 3 months, plus 2+ other symptoms (frequency change, stool change, urgency, bloating)."],[20,"At least 3 days a month, plus 2+ other symptoms."],[30,"At least 1 day a week, plus 2+ other symptoms."]],
+ evidence:["Diagnosis","Symptom log over 3 months","Southwest Asia service (Gulf War presumptive)"],
+ say:["In the last 3 months I've had pain tied to bowel movements about ___ days a week/month.","Urgency: ___. Bloating: ___. I plan my day around bathrooms when ___."],avoid:[],
+ note:"Presumptive as a functional GI disorder for Southwest Asia and Afghanistan service. Also claimed secondary to PTSD.",sec:[]},
+{id:"htn",name:"Hypertension",sys:"Cardiovascular",dc:"DC 7101",cfr:"38 CFR 4.104",pres:null,
+ measures:"Blood pressure readings over time and whether you need continuous medication.",
+ tiers:[[10,"Diastolic mostly 100+ or systolic mostly 160+, or history of diastolic 100+ needing continuous medication."],[20,"Diastolic mostly 110+ or systolic mostly 200+."],[40,"Diastolic mostly 120+."],[60,"Diastolic mostly 130+."]],
+ evidence:["Multiple high readings documented in service","Medication prescription"],
+ say:["I take ___ for blood pressure since ___."],avoid:[],
+ note:"Not presumptive for burn pits. Can be claimed secondary to sleep apnea or PTSD with a medical opinion.",sec:[]},
+{id:"ed",name:"Erectile dysfunction",sys:"Genitourinary",dc:"DC 7522",cfr:"38 CFR 4.115b",pres:null,
+ measures:"Diagnosis and cause. Rated 0%, but it unlocks Special Monthly Compensation (SMC-K).",
+ tiers:[[0,"Rated 0%, plus SMC-K: $139.87/month on top of your combined rating."]],
+ evidence:["Diagnosis","Medical opinion linking it to a service-connected condition or its medication (SSRIs, BP meds)"],
+ say:["It started after I began taking ___ for ___."],avoid:["Skipping it out of embarrassment: it's real money every month"],
+ note:"Usually secondary to PTSD medication, hypertension, or a back or nerve condition.",sec:[]},
+{id:"scars",name:"Scars",sys:"Skin",dc:"DC 7801–7805",cfr:"38 CFR 4.118",pres:null,
+ measures:"Number of painful or unstable scars, and the size of deep scars.",
+ tiers:[[10,"1–2 painful or unstable scars."],[20,"3–4 painful or unstable scars."],[30,"5 or more painful or unstable scars."]],
+ evidence:["Records of the injury or surgery in service","Photos"],
+ say:["The scar on my ___ hurts when ___."],avoid:[],
+ note:"Surgical scars from in-service surgeries count. VA proposed changes to painful scar rules in Sep 2025.",sec:[]},
+{id:"carpal",name:"Carpal tunnel / median nerve",sys:"Nerves",dc:"DC 8515",cfr:"38 CFR 4.124a",pres:null,limb:"arm",
+ measures:"Sensation, grip strength, muscle atrophy, nerve conduction. Dominant hand rates higher.",
+ tiers:[[10,"Mild incomplete paralysis."],[30,"Dominant hand: moderate incomplete paralysis (20% non-dominant)."],[50,"Dominant hand: severe incomplete paralysis (40% non-dominant)."],[70,"Dominant hand: complete paralysis (60% non-dominant)."]],
+ evidence:["Nerve conduction study","STR visits"],say:["I drop things about ___ times a week.","My hand goes numb when ___."],avoid:[],note:"",sec:[]},
+{id:"fibro",name:"Fibromyalgia",sys:"Musculoskeletal",dc:"DC 5025",cfr:"38 CFR 4.71a",pres:"gulf",
+ measures:"Widespread pain and how constant it is despite treatment.",
+ tiers:[[10,"Needs continuous medication."],[20,"Episodic, flares often triggered by stress or illness, present more than a third of the time."],[40,"Constant or nearly constant, not helped by treatment."]],
+ evidence:["Diagnosis","Southwest Asia service (Gulf War presumptive)"],say:["I hurt in ___ most days; flares last ___."],avoid:[],
+ note:"Gulf War presumptive as a medically unexplained chronic multisymptom illness.",sec:[]},
+{id:"cancer",name:"PACT Act cancer",sys:"Cancer",dc:"DC 6819 and others",cfr:"38 CFR 3.320",pres:"pact",
+ measures:"Active treatment, then residuals after treatment ends.",
+ tiers:[[100,"100% during active treatment and for 6 months after, then rated on what remains."]],
+ evidence:["Diagnosis","PACT location"],say:[],avoid:[],
+ note:"Presumptive: respiratory, head, neck, GI, brain, kidney, pancreatic, lymphatic, reproductive cancers, melanoma, lymphoma. Added Jan 2025: bladder, ureter, leukemias, multiple myeloma, myelodysplastic syndromes, myelofibrosis.",sec:[]},
+];
+const LIBMAP = Object.fromEntries(LIB.map(c=>[c.id,c]));
+
+const PHASES = [["now","Before you get out"],["file","Filing the claim"],["exam","C&P exams"],["decision","After the decision"]];
+/* due: days relative to separation date */
+const PLAYS = [
+{id:"bdd",phase:"now",impact:"high",due:-90,title:"File through Benefits Delivery at Discharge (BDD)",
+ why:"Filing 180 to 90 days before separation can get your decision close to your last day, so pay starts the day after discharge.",
+ steps:["You need a known separation date and must be available for VA exams within 45 days of filing.","Submit the Separation Health Assessment Part A self-assessment with the claim.","File online at VA.gov so VA pulls your service treatment records itself.","Under 90 days left? File a standard pre-discharge claim. Already out? File within 1 year and your effective date is still the day after discharge."],
+ forms:["VA 21-526EZ","SHA Part A"]},
+{id:"sickcall",phase:"now",impact:"high",due:-1,title:"Get every real problem into your medical record before you leave",
+ why:"If it's in your service treatment records, the in-service part of the claim is done. If it isn't, you'll need a nexus letter later.",
+ steps:["Go to sick call for each issue you actually have: back, knees, ringing, sleep, headaches, breathing, mood, stomach.","Ask the provider to note when it started, what caused it (deployment, ruck, blast, burn pit), and that it's ongoing.","Ask for referrals now: sleep study, audiogram, imaging, behavioral health."],forms:[]},
+{id:"records",phase:"now",impact:"high",due:-30,title:"Pull copies of everything",
+ why:"With three deployments you should have three Post-Deployment Health Assessments. They record your symptoms and exposures in writing, from the time.",
+ steps:["Full service treatment records and MHS GENESIS patient portal downloads.","Post-Deployment Health Assessments (DD 2796) and Reassessments (DD 2900) for each deployment.","Deployment orders, awards (CAR, CIB, CAB, Purple Heart), evaluations, and profiles.","Your Individual Longitudinal Exposure Record (ILER) for burn pit and airborne hazard exposure."],forms:["DD 2796","DD 2900","ILER"]},
+{id:"buddy",phase:"now",impact:"medium",due:-30,title:"Get buddy statements while your unit is still together",
+ why:"People scatter after separation. A statement from someone who saw the injury, the blast, or the change in you can establish the in-service event.",
+ steps:["Ask the people who were there: dates, place, what they saw, what changed.","Spouse or family can describe changes since deployments: sleep, mood, pain.","Facts only, in their words. Each person signs their own."],forms:["VA 21-10210"]},
+{id:"vso",phase:"now",impact:"medium",due:null,title:"Line up free accredited help",
+ why:"A VSO reviews your claim for free and can catch secondary conditions you'd miss. Claim sharks who take a cut of back pay aren't accredited for initial claims.",
+ steps:["DAV, VFW, American Legion, or your state VSO. Many have offices on base during TAP.","Check anyone's accreditation at va.gov/ogc/apps/accreditation.","Never sign a contract giving a percentage of your back pay for an initial claim."],forms:["VA 21-22 (appoint a VSO)"]},
+{id:"sha",phase:"now",impact:"high",due:-90,title:"Complete the Separation Health Assessment honestly and fully",
+ why:"It's the last medical snapshot of your service. Anything left off here is harder to connect later.",
+ steps:["List every condition and symptom, even ones you've \"gotten used to.\"","Note deployment exposures: burn pits, blasts, noise, sand and dust.","For BDD, VA's exam can count as your separation exam."],forms:["SHA Part A / Part B"]},
+{id:"toxic",phase:"file",impact:"high",due:-90,title:"Claim your toxic exposures (PACT Act)",
+ why:"For covered locations, VA presumes certain conditions came from service. You skip the hardest part of proving the link.",
+ steps:["Fill out the toxic exposure section of the 21-526EZ: list every location and hazard.","Get the free VA toxic exposure screening.","Claim presumptive conditions you actually have: sinusitis, rhinitis, asthma, and others."],forms:["VA 21-526EZ section"]},
+{id:"statements",phase:"file",impact:"medium",due:-90,title:"Write a personal statement for each condition",
+ why:"Your words fill in what the records miss: how it started, how it's gone since, and what it costs you now.",
+ steps:["When and how it started in service.","What it has been like since: frequency, treatment.","How it affects work and home today, including worst days and flare-ups.","Keep it true and specific. Dates and numbers beat adjectives."],forms:["VA 21-4138","VA 21-10210"]},
+{id:"stressor",phase:"file",impact:"high",due:-90,title:"File the PTSD stressor statement",
+ why:"If you have a combat award or served where there was hostile activity, your own statement can establish the stressor.",
+ steps:["Describe each event: approximate date, place, unit, what happened.","Include fear of hostile military or terrorist activity (IDF, IEDs, small arms).","Attach anything that backs it up: awards, unit records, buddy statements."],forms:["VA 21-0781"]},
+{id:"secondary",phase:"file",impact:"high",due:-90,title:"Claim secondary conditions",
+ why:"Conditions caused or worsened by a service-connected one are service connected too (38 CFR 3.310). This is where many ratings climb.",
+ steps:["Back pain into a leg: radiculopathy. Bad knee changing your gait: hip or back.","PTSD or its meds: sleep apnea, ED, GERD, IBS, hypertension.","NSAIDs for joint pain: GERD.","Get a medical opinion linking each secondary to its primary."],forms:["VA 21-526EZ"]},
+{id:"log",phase:"exam",impact:"high",due:-60,title:"Keep a 30-day symptom log before your exams",
+ why:"Examiners ask how often and how bad. A log turns \"I don't know, a lot\" into dates and numbers they can write down.",
+ steps:["Each day: symptom, severity 1–10, how long, what you couldn't do, meds taken.","Mark flare-ups and missed or modified work.","Bring a copy to the exam and give it to the examiner."],forms:[]},
+{id:"exam",phase:"exam",impact:"high",due:-45,title:"Run the C&P exam playbook",
+ why:"The exam is the single biggest factor in your rating. Accurate, complete answers are what move the number.",
+ steps:["See the C&P exam prep tab for the rules and your cheat sheet.","Never skip an exam. Reschedule ahead if you must.","Write down what happened right after: how long, what was measured."],forms:[]},
+{id:"decision",phase:"decision",impact:"high",due:null,title:"Read the decision and pick a review lane within 1 year",
+ why:"Filing a review within a year keeps your effective date, so any increase pays back to the start.",
+ steps:["Read the code sheet: what was granted, at what percent, and why.","New evidence? Supplemental Claim. A rater error? Higher-Level Review with an informal conference. Want a judge? Board appeal.","Ask for the exam report if it doesn't match what happened."],forms:["VA 20-0995","VA 20-0996","VA 10182","VA 20-10206"]},
+{id:"dependents",phase:"decision",impact:"medium",due:null,title:"Add your dependents at 30% or higher",
+ why:"At 30%+ VA pays more for a spouse, children, and dependent parents.",steps:["File to add each dependent with marriage and birth certificates."],forms:["VA 21-686c"]},
+{id:"perks",phase:"decision",impact:"medium",due:null,title:"Turn on the benefits around your rating",
+ why:"The rating unlocks more than the monthly payment.",
+ steps:["VA health care enrollment.","Veteran Readiness and Employment (Chapter 31) for school or job training.","VA home loan funding fee waiver (any compensable rating).","Federal hiring preference (10-point for 30%+), state property tax and tuition benefits."],forms:["VA 10-10EZ","VA 28-1900"]},
+{id:"tdiu",phase:"decision",impact:"high",due:null,title:"Look at TDIU if your conditions keep you from working",
+ why:"Total Disability based on Individual Unemployability pays at the 100% rate.",
+ steps:["Usually needs one condition at 60%+, or 70% combined with one at 40%+.","You must be unable to hold substantially gainful employment because of service-connected conditions."],forms:["VA 21-8940"]},
+{id:"retire",phase:"decision",impact:"medium",due:null,onlyIf:p=>p.retiring,title:"Retiring? Apply for CRDP or CRSC",
+ why:"Retirees can get retirement pay and VA compensation together through CRDP (50%+) or CRSC (combat-related).",
+ steps:["CRDP is automatic at 50%+. Check DFAS after your rating posts.","Apply for CRSC through your branch for combat-related conditions."],forms:["DD 2860"]},
+];
+
+const MISSIONS = [
+{id:"review",title:"Full claim review",desc:"Find the highest-value moves for every condition, including secondaries.",
+ text:"Review the whole case. Find the highest-value moves to strengthen service connection and support an accurate rating for each condition, and name secondary conditions worth claiming."},
+{id:"scout",title:"Scout X and the web",desc:"Use Grok's live search for VA changes from the last 90 days that hit this case.",
+ text:"Use your live X and web search to find VA disability news from the last 90 days that affects this case: rating schedule changes, new presumptives, BDD or claim process changes, court decisions. Cite a source URL for each."},
+{id:"statements",title:"Draft my statements",desc:"First-person drafts for each condition, using only facts from the case file.",
+ text:"Draft a personal statement (VA Form 21-4138 style) for each condition, using only facts in the case file. Put [FILL IN] wherever a fact is missing. Never invent symptoms, events, or dates."},
+{id:"mock",title:"Mock C&P exam",desc:"The questions an examiner will likely ask, and what each DBQ measures.",
+ text:"Run a mock C&P exam: for each condition, list the questions the examiner will likely ask and what the Disability Benefits Questionnaire (DBQ) measures, with a tip for answering accurately and completely."},
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const uidGen = () => "c" + Math.random().toString(36).slice(2,9);
+const EV_SC = [["dx","Current diagnosis from a doctor"],["str","It's in my service treatment records (sick call, profile, ER, PDHA)"],["nexus","Doctor's opinion: \"at least as likely as not\" caused by service"],["cont","Symptoms ongoing since service / currently treated"],["lay","Buddy or family statement"],["personal","My personal statement is written"]];
+const EV_RT = [["sev","Medical records show symptoms at this level"],["log","30-day symptom or flare-up log"],["impact","Statement covers work and home impact"],["meds","Treatment and medications documented"],["prep","Practiced my C&P lines for this one"]];
+
+function makeCond(lib, target, side){
+  const L = LIBMAP[lib];
+  return {uid:uidGen(), lib, side:side||"", target: target ?? (L ? L.tiers[0][0] : 10), ev:{}, notes:"", custom:null};
+}
+function starterCase(){
+  return {v:1, starter:true,
+    profile:{branch:"Army", sep:"", retiring:false, combat:false, noise:false, blast:false, deployments:[{loc:"",year:""},{loc:"",year:""},{loc:"",year:""}]},
+    conditions:[makeCond("tinnitus",10),makeCond("ptsd",50),makeCond("back",20),makeCond("knee",10,"right-leg"),makeCond("migraine",30),makeCond("osa",50),makeCond("sinusitis",10),makeCond("rhinitis",10)],
+    plays:{}, scout:{}, scoutSeen:"", grok:{history:[],plays:[],questions:[]}, updatedAt:""};
+}
+let state = starterCase();
+let tab = "plan";
+let openCards = new Set();
+let scoutItems = [];
+let scoutMeta = null;
+let scoutFilter = "all";
+let mission = "review";
+let grokMsg = null;
+const store = {mode:"none", ref:null, saving:false, again:false, dirty:false, lastJSON:"", timer:null, loaded:false};
+let downloads = null;
+let grokMcp = null;   /* mcp namespace when this view can reach the local grokbot server; null = copy/paste only */
+let grokBusy = false;
+const GROK_SERVER = "host:grokbot";
+
+try{ const t = localStorage.getItem("vp-tab"); if(t) tab = t; }catch(e){}
+if (location.hash && ["plan","claims","scout","prep","grok"].includes(location.hash.slice(1))) tab = location.hash.slice(1);
+
+/* ============================================================
+   MATH
+   ============================================================ */
+function combine(pcts){
+  const s = pcts.filter(p=>p>0).sort((a,b)=>b-a);
+  let c = 0; const chain = [];
+  for (const r of s){ c = Math.round(c + r*(100-c)/100); chain.push(c); }
+  return {exact:c, chain};
+}
+const roundVA = c => Math.min(100, Math.round(c/10)*10);
+function combinedRating(items){ /* items: [{pct, side}] */
+  const groups = {arm:[], leg:[]}; const other = [];
+  const has = {"left-arm":0,"right-arm":0,"left-leg":0,"right-leg":0};
+  items.forEach(i=>{ if(i.pct>0 && has[i.side]!==undefined) has[i.side]++; });
+  const armBF = has["left-arm"]>0 && has["right-arm"]>0;
+  const legBF = has["left-leg"]>0 && has["right-leg"]>0;
+  items.forEach(i=>{
+    if (armBF && (i.side==="left-arm"||i.side==="right-arm")) groups.arm.push(i.pct);
+    else if (legBF && (i.side==="left-leg"||i.side==="right-leg")) groups.leg.push(i.pct);
+    else other.push(i.pct);
+  });
+  const bf = [];
+  for (const k of ["arm","leg"]) if (groups[k].length){ const g = combine(groups[k]).exact; bf.push({k, value:Math.round(g*1.1), base:g}); }
+  const all = other.concat(bf.map(b=>b.value));
+  const r = combine(all);
+  return {exact:r.exact, rating:roundVA(r.exact), chain:r.chain, bilateral:bf};
+}
+const money = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0 = n => "$" + Math.round(n).toLocaleString("en-US");
+
+function deployFlags(p){
+  const locs = (p.deployments||[]).map(d=>d.loc).filter(Boolean);
+  return {pact: locs.some(l=>PACT_LOCS.includes(l)), gulf: locs.some(l=>GULF_LOCS.includes(l)), count: locs.length};
+}
+function presInfo(L, p){
+  if (!L || !L.pres) return null;
+  const f = deployFlags(p);
+  if (L.pres==="pact") return f.pact ? {legal:true, label:"PACT Act presumptive", text:"Your deployment locations are covered. VA presumes this came from service once you have a diagnosis."} : {legal:false, missing:true, label:"PACT Act presumptive", text:"Presumptive for burn pit and airborne hazard locations. Add your deployment locations to check."};
+  if (L.pres==="gulf") return f.gulf ? {legal:true, label:"Gulf War presumptive", text:"Your Southwest Asia / Afghanistan service is covered. VA presumes service connection with a diagnosis."} : {legal:false, missing:true, label:"Gulf War presumptive", text:"Presumptive for Southwest Asia and Afghanistan service. Add your deployment locations to check."};
+  if (L.pres==="combat") return p.combat ? {legal:false, inserv:25, label:"Combat stressor", text:"With a combat award, your own statement can establish the stressor."} : (f.count ? {legal:false, inserv:15, label:"Fear of hostile activity", text:"Deployments support the stressor; a VA examiner must confirm it fits."} : {legal:false, missing:true, label:"Combat stressor", text:"Mark a combat award or add deployments to check."});
+  if (L.pres==="noise") return p.noise ? {legal:false, inserv:20, label:"Noise exposure", text:"VA concedes noise exposure for many jobs and for combat."} : {legal:false, missing:true, label:"Noise exposure", text:"Mark noise exposure in your service profile if it's true."};
+  if (L.pres==="blast") return p.blast ? {legal:false, inserv:15, label:"Blast exposure", text:"Blast exposure supports the in-service event. Records and buddy statements make it solid."} : {legal:false, missing:true, label:"Blast exposure", text:"Mark blast or concussion exposure in your service profile if it's true."};
+  return null;
+}
+
+function scoreCond(c, p){
+  const L = LIBMAP[c.lib]; const ev = c.ev||{};
+  const pres = presInfo(L, p);
+  const lay = L && L.lay;
+  let dx = ev.dx ? 25 : (lay ? 25 : 0);
+  let inserv = ev.str ? 25 : (pres && pres.legal ? 25 : (pres && pres.inserv ? pres.inserv : (ev.lay ? 8 : 0)));
+  let nexus = pres && pres.legal ? 25 : (ev.nexus ? 20 : (ev.str && ev.cont ? 12 : (ev.cont ? 6 : 0)));
+  let sc = dx + inserv + nexus + (ev.cont?10:0) + (ev.lay?5:0) + (ev.personal?5:0) + (ev.prep?5:0);
+  sc = Math.min(100, sc);
+  if (!dx) sc = Math.min(sc, 30);
+  if (!ev.str && !(pres && (pres.legal||pres.inserv)) && !ev.lay) sc = Math.min(sc, 45);
+
+  const tiers = L ? L.tiers : [[c.target,""]];
+  const idx = Math.max(0, tiers.findIndex(t=>t[0]===c.target));
+  let rt = (ev.sev?35:0)+(ev.log?20:0)+(ev.impact?15:0)+(ev.meds?15:0)+(ev.prep?15:0);
+  if (idx===0 || tiers.length===1) rt += 25;
+  else if (idx===1) rt += 10;
+  rt = Math.min(100, rt);
+  let likely = rt >= 60 ? c.target : (idx>0 ? tiers[idx-1][0] : c.target);
+  const connected = sc >= 50;
+  if (!connected) likely = 0;
+
+  /* next best move: biggest unchecked lever */
+  const moves = [];
+  if (!dx) moves.push([40,"Get a current diagnosis. VA can't rate what isn't diagnosed."]);
+  if (!ev.str && !(pres&&pres.legal)) moves.push([30, pres&&pres.missing ? pres.text : "Get it documented: sick call before separation, or pull the record where it already is."]);
+  if (!ev.nexus && !(pres&&pres.legal) && !ev.str) moves.push([26,"Get a nexus opinion from a doctor: \"at least as likely as not\" caused by service."]);
+  if (!ev.sev && idx>0) moves.push([24,"Your records need to show symptoms at the "+c.target+"% level. Tell your provider the real frequency and severity."]);
+  if (!ev.log) moves.push([18,"Start a 30-day symptom log so you can give the examiner dates and numbers."]);
+  if (!ev.cont) moves.push([14,"Keep getting treated. Ongoing treatment shows it's chronic."]);
+  if (!ev.impact) moves.push([12,"Write how it hits work and home, including worst days."]);
+  if (!ev.lay) moves.push([10,"Get a buddy or family statement on what they've seen."]);
+  if (!ev.prep) moves.push([9,"Practice your C&P lines for this condition."]);
+  if (!ev.meds) moves.push([8,"Make sure treatment and meds are in your records."]);
+  moves.sort((a,b)=>b[0]-a[0]);
+  return {sc, rt, likely, connected, pres, next: moves[0] ? moves[0][1] : "Ready. Keep your log going and show up to the exam.", idx};
+}
+const level = n => n>=75 ? "good" : n>=50 ? "warn" : "bad";
+const levelWord = n => n>=75 ? "Strong" : n>=50 ? "Building" : "Thin";
+
+function condName(c){ return c.custom ? c.custom.name : (LIBMAP[c.lib]?.name || "Condition"); }
+function sideLabel(s){ const f = SIDES.find(x=>x[0]===s); return s && f ? f[1] : ""; }
+
+function totals(){
+  const p = state.profile;
+  const tItems = [], lItems = []; let smcT = false, smcL = false;
+  const scored = state.conditions.map(c=>({c, s:scoreCond(c,p)}));
+  scored.forEach(({c,s})=>{
+    tItems.push({pct:c.target, side:c.side});
+    lItems.push({pct:s.likely, side:c.side});
+    if (c.lib==="ed"){ smcT = true; if (s.connected) smcL = true; }
+  });
+  const T = combinedRating(tItems), Lk = combinedRating(lItems);
+  return {T, L:Lk, scored, payT:(RATES[T.rating]||0)+(smcT?SMCK:0), payL:(RATES[Lk.rating]||0)+(smcL?SMCK:0), smcT, smcL};
+}
+
+/* ============================================================
+   DATES
+   ============================================================ */
+const DAY = 86400000;
+function today0(){ const d = new Date(); d.setHours(0,0,0,0); return d; }
+function parseD(s){ if(!s) return null; const [y,m,d] = s.split("-").map(Number); if(!y||!m||!d) return null; const x = new Date(y,m-1,d); x.setHours(0,0,0,0); return x; }
+const addD = (d,n) => new Date(d.getTime()+n*DAY);
+const fmt = d => d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
+const fmtShort = d => d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+const diffD = (a,b) => Math.round((a-b)/DAY);
+function clockInfo(){
+  const sep = parseD(state.profile.sep);
+  if (!sep) return {sep:null};
+  const t = today0(); const days = diffD(sep,t);
+  const anniv = new Date(sep); anniv.setFullYear(anniv.getFullYear()+1);
+  const open = addD(sep,-180), close = addD(sep,-90), year = addD(anniv,-1);
+  let st, line;
+  if (days > 180){ st="wait"; line = "BDD window opens "+fmt(open)+" ("+diffD(open,t)+" days)"; }
+  else if (days >= 90){ st="open"; line = "BDD window open. Closes "+fmt(close)+" ("+diffD(close,t)+" days)"; }
+  else if (days > 0){ st="late"; line = "BDD closed. File a pre-discharge claim now"; }
+  else if (diffD(year,t) >= 0){ st="late"; line = "File by "+fmt(year)+" to be paid from the day after discharge ("+diffD(year,t)+" days)"; }
+  else { st="late"; line = "Past the 1-year mark. Effective date will be your filing date"; }
+  return {sep, days, open, close, year, st, line};
+}
+
+/* ============================================================
+   PERSISTENCE
+   ============================================================ */
+function setSave(kind, text){
+  const chip = document.getElementById("saveChip");
+  chip.className = "chip " + kind; document.getElementById("saveText").textContent = text;
+}
+function changed(opts){
+  if (!(opts && opts.silent)) state.starter = false;
+  state.updatedAt = new Date().toISOString();
+  store.dirty = true;
+  clearTimeout(store.timer);
+  store.timer = setTimeout(flush, 700);
+  if (store.mode==="db") setSave("busy","Saving");
+  renderReadout();
+  if (opts && opts.full) renderView();
+}
+async function flush(){
+  if (store.mode==="local"){
+    try{ localStorage.setItem("vp-case", JSON.stringify(state)); setSave("ok","Saved on this device"); }catch(e){ setSave("off","Not saved"); }
+    store.dirty = false; return;
+  }
+  if (store.mode!=="db") { setSave("off","Not saved"); return; }
+  if (store.saving){ store.again = true; return; }
+  store.saving = true;
+  const body = JSON.parse(JSON.stringify(state));
+  store.lastJSON = JSON.stringify(body);
+  try{
+    await store.ref.set(body);
+    setSave("ok","Saved");
+  }catch(e){
+    if (e && e.code==="unavailable"){ setTimeout(flush, 1500+Math.random()*1500); }
+    else { setSave("off", e && e.code==="quota_exceeded" ? "Storage full" : "Not saved"); }
+  }
+  store.saving = false;
+  if (store.again){ store.again = false; flush(); } else store.dirty = false;
+}
+function typingInView(){
+  const a = document.activeElement;
+  return a && (a.tagName==="TEXTAREA" || (a.tagName==="INPUT" && a.type!=="checkbox" && a.type!=="radio")) && document.getElementById("view").contains(a);
+}
+function loadLocal(){
+  try{ const raw = localStorage.getItem("vp-case"); if (raw){ const d = JSON.parse(raw); if (d && d.conditions) return d; } }catch(e){}
+  return null;
+}
+function normalize(d){
+  const s = Object.assign(starterCase(), d);
+  s.profile = Object.assign(starterCase().profile, d.profile||{});
+  s.grok = Object.assign({history:[],plays:[],questions:[]}, d.grok||{});
+  s.plays = s.plays||{}; s.scout = s.scout||{};
+  s.conditions = (s.conditions||[]).map(c=>Object.assign({ev:{},notes:"",side:"",custom:null}, c));
+  return s;
+}
+
+async function boot(){
+  render();
+  const cl = window.claude && typeof window.claude.use==="function" ? window.claude : null;
+  if (cl) cl.use("mcp").then(m=>{ grokMcp = m; if (tab==="grok" && !typingInView()) renderView(); }).catch(()=>{});
+  const [db, user] = cl ? await Promise.all([cl.use("db"), cl.use("user")]) : [null, null];
+  try{ downloads = cl ? await cl.use("downloads") : null; }catch(e){ downloads = null; }
+  let uid = null;
+  if (user){ try{ uid = await user.id(); }catch(e){} }
+  if (db && uid){
+    store.mode = "db";
+    store.ref = db.doc("data/users/"+uid+"/case");
+    setSave("busy","Syncing");
+    store.ref.onSnapshot(snap=>{
+      if (!snap.exists){
+        if (!store.loaded){
+          const local = loadLocal();
+          if (local){ state = normalize(local); changed({full:true}); }
+          setSave("ok", local ? "Saved" : "Ready");
+        }
+        store.loaded = true; render(); return;
+      }
+      const d = snap.data(); const j = JSON.stringify(d);
+      store.loaded = true;
+      if (j === store.lastJSON || store.dirty) { if(!store.dirty) setSave("ok","Saved"); return; }
+      store.lastJSON = j;
+      state = normalize(d);
+      setSave("ok","Saved");
+      if (typingInView()) renderReadout(); else render();
+    }, err=>{ setSave("off","Sync stopped"); });
+
+    db.collection("plays").orderBy("foundAt","desc").limit(200).onSnapshot(snap=>{
+      scoutItems = snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+      renderScoutBadge();
+      if (tab==="scout" && !typingInView()) renderView();
+    }, ()=>{});
+    db.doc("meta/scout").onSnapshot(snap=>{
+      scoutMeta = snap.exists ? snap.data() : null;
+      renderScoutChip();
+      if (tab==="scout" && !typingInView()) renderView();
+    }, ()=>{});
+  } else {
+    const local = loadLocal();
+    if (local) state = normalize(local);
+    try{ localStorage.setItem("vp-probe","1"); localStorage.removeItem("vp-probe"); store.mode="local"; setSave("ok","Saved on this device"); }
+    catch(e){ store.mode="none"; setSave("off","Not saved"); }
+    document.getElementById("scoutText").textContent = "Scout: open in Claude to sync";
+    render();
+  }
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const esc = s => String(s??"").replace(/[&<>"']/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+const safeUrl = u => (typeof u==="string" && /^https:\/\//i.test(u)) ? u : null;
+
+function render(){ renderReadout(); renderTabs(); renderView(); renderScoutBadge(); renderScoutChip(); }
+
+function renderTabs(){
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===tab ? "true":"false"));
+}
+function renderScoutBadge(){
+  const seen = state.scoutSeen || "";
+  const n = scoutItems.filter(i=>!state.scout[i.id] && (!seen || (i.foundAt||"") > seen)).length;
+  const b = document.getElementById("scoutBadge");
+  b.hidden = !n || tab==="scout"; b.textContent = n;
+}
+function renderScoutChip(){
+  const chip = document.getElementById("scoutChip"); const t = document.getElementById("scoutText");
+  if (store.mode!=="db") return;
+  if (scoutMeta && scoutMeta.lastRun){
+    const d = new Date(scoutMeta.lastRun); const hrs = (Date.now()-d.getTime())/3600000;
+    chip.className = "chip " + (hrs < 36 ? "ok" : "busy");
+    t.textContent = "Scout: " + (hrs < 1 ? "just now" : hrs < 24 ? Math.round(hrs)+"h ago" : Math.round(hrs/24)+"d ago");
+  } else { chip.className = "chip busy"; t.textContent = "Scout: first run pending"; }
+}
+
+function renderReadout(){
+  const t = totals(); const k = clockInfo();
+  const chainT = t.T.chain.length ? t.T.chain.join(" → ") + ", rounds to " + t.T.rating + "%" : "add conditions";
+  const bfT = t.T.bilateral.length ? " · bilateral factor on " + t.T.bilateral.map(b=>b.k+"s").join(" & ") : "";
+  const el = document.getElementById("readout");
+  el.innerHTML = `
+    <div class="cell">
+      <span class="label">Target rating</span>
+      <span class="big target num">${t.T.rating}<small>%</small></span>
+      <span class="chain">VA math: ${esc(chainT)}${esc(bfT)}</span>
+    </div>
+    <div class="cell">
+      <span class="label">Evidence supports today</span>
+      <span class="big num">${t.L.rating}<small>%</small></span>
+      <span class="chain">${t.L.rating < t.T.rating ? (t.T.rating - t.L.rating) + " points to close · see Claims" : "Evidence matches your target"}</span>
+    </div>
+    <div class="cell">
+      <span class="label">Monthly, tax-free</span>
+      <span class="money num">${money(t.payL)}</span>
+      <span class="money-sub num">today's evidence · ${money0(t.payL*12)}/yr</span>
+      <span class="money-sub num" style="color:var(--signal)">${money(t.payT)} at target · ${money0(t.payT*12)}/yr</span>
+    </div>
+    <div class="cell clock">
+      <span class="label">Separation clock</span>
+      ${k.sep ? `<strong class="num">${k.days > 0 ? k.days + " days" : k.days === 0 ? "Today" : Math.abs(k.days) + " days out"}</strong>
+        <span>${k.days>0 ? "to " + fmt(k.sep) : "since " + fmt(k.sep)}</span>
+        <span class="state ${k.st}">${esc(k.line)}</span>`
+      : `<strong>Set date</strong><span>Add your separation date in Game plan to time the BDD window.</span>`}
+    </div>`;
+}
+
+let seenAtOpen = null;
+function renderView(){
+  const v = document.getElementById("view");
+  if (tab==="scout"){ if (seenAtOpen===null) seenAtOpen = state.scoutSeen || ""; } else seenAtOpen = null;
+  if (tab==="plan") v.innerHTML = viewPlan();
+  else if (tab==="claims") v.innerHTML = viewClaims();
+  else if (tab==="scout") v.innerHTML = viewScout();
+  else if (tab==="prep") v.innerHTML = viewPrep();
+  else v.innerHTML = viewGrok();
+  if (tab==="scout") markScoutSeen();
+}
+
+/* ---------- PLAN ---------- */
+function viewPlan(){
+  const p = state.profile; const k = clockInfo(); const f = deployFlags(p);
+  const deps = p.deployments.map((d,i)=>{
+    const pact = PACT_LOCS.includes(d.loc), gulf = GULF_LOCS.includes(d.loc);
+    return `<div class="dep">
+      <span class="n">#${i+1}</span>
+      <select class="inline" id="dep-loc-${i}" data-bind="dep" data-i="${i}" data-k="loc" aria-label="Deployment ${i+1} location">
+        <option value="">Pick location</option>${LOCS.map(l=>`<option ${l===d.loc?"selected":""}>${esc(l)}</option>`).join("")}
+      </select>
+      <input class="inline" id="dep-year-${i}" data-bind="dep" data-i="${i}" data-k="year" value="${esc(d.year)}" placeholder="Year" aria-label="Deployment ${i+1} year" style="background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:8px 10px;width:100%">
+      <button class="btn ghost sm" data-act="dep-remove" data-i="${i}" aria-label="Remove deployment ${i+1}">✕</button>
+      ${(pact||gulf) ? `<div class="flags">${pact?'<span class="pill od">PACT location</span>':''}${gulf?'<span class="pill od">Gulf War location</span>':''}</div>`:""}
+    </div>`;
+  }).join("");
+
+  let ms = [];
+  if (k.sep){
+    const t = today0();
+    const pts = [[addD(k.sep,-180),"BDD window opens","Earliest day to file"],[addD(k.sep,-90),"BDD window closes","Last day for BDD"],[k.sep,"Separation","Pay can start the next day"],[addD(k.sep,1),"Effective date","If filed within 1 year"],[k.year,"1-year deadline","Last day to keep that effective date"]];
+    let nowSet = false;
+    ms = pts.map(([d,tt,x])=>{ let cls = d < t ? "past" : ""; if(!cls && !nowSet){ cls="now"; nowSet=true; } return `<div class="ms ${cls}"><div class="d">${fmt(d)}</div><div class="t">${tt}</div><div class="x">${x}</div></div>`; });
+  } else {
+    ms = [["180 days before","BDD window opens","Earliest day to file"],["90 days before","BDD window closes","Last day for BDD"],["Separation","Day zero","Pay can start the next day"],["Day after","Effective date","If filed within 1 year"],["1 year after","Deadline","Last day to keep that effective date"]].map(([d,tt,x])=>`<div class="ms"><div class="d">${d}</div><div class="t">${tt}</div><div class="x">${x}</div></div>`);
+  }
+
+  const playsHtml = PHASES.map(([ph,label])=>{
+    const list = PLAYS.filter(pl=>pl.phase===ph && (!pl.onlyIf || pl.onlyIf(p)));
+    if (!list.length) return "";
+    const done = list.filter(pl=>state.plays[pl.id]==="done").length;
+    return `<div class="phase">
+      <div class="phase-head"><h3>${label}</h3><span class="prog">${done}/${list.length}<i><b style="width:${Math.round(done/list.length*100)}%"></b></i></span></div>
+      ${list.map(pl=>playRow(pl,k)).join("")}
+    </div>`;
+  }).join("");
+
+  const saved = savedPlays();
+  const savedHtml = saved.length ? `<div class="phase"><div class="phase-head"><h3>Saved from Scout &amp; GrokBot</h3><span class="prog">${saved.length}</span></div>
+    ${saved.map(s=>`<div class="play"><div class="status"><span class="pill ${s.src==="GrokBot"?"sig":"od"}">${esc(s.src)}</span></div>
+      <div><h4>${esc(s.title)}</h4>${s.action?`<p class="why">${esc(s.action)}</p>`:""}</div>
+      <div class="due"><button class="btn ghost sm" data-act="unsave" data-id="${esc(s.id)}">Remove</button></div></div>`).join("")}</div>` : "";
+
+  return `<div class="section">
+    ${state.starter ? `<div class="banner"><p><b>Starter case loaded.</b> These are the claims multi-deployment veterans file most. Keep the ones you actually have, remove the rest, and fill in your service below. Nothing saves until you change something.</p><button class="btn sm" data-act="tab" data-tab="claims">Review claims</button></div>`:""}
+    <div class="panel">
+      <div class="sec-head" style="margin-bottom:14px"><h2>Your service</h2><span class="note">Drives the clock, presumptives, and deadlines.</span></div>
+      <div class="profile">
+        <label class="field"><span class="label">Branch</span><select id="pf-branch" data-bind="profile" data-k="branch">${BRANCHES.map(b=>`<option ${b===p.branch?"selected":""}>${b}</option>`).join("")}</select></label>
+        <label class="field"><span class="label">Separation date</span><input type="date" id="pf-sep" data-bind="profile" data-k="sep" value="${esc(p.sep)}"></label>
+        <div class="field wide"><span class="label">What your record shows</span>
+          <label class="check"><input type="checkbox" id="pf-combat" data-bind="profile" data-k="combat" ${p.combat?"checked":""}><span>Combat award (CAR, CIB, CAB, CAM, Purple Heart)</span></label>
+          <label class="check"><input type="checkbox" id="pf-noise" data-bind="profile" data-k="noise" ${p.noise?"checked":""}><span>Regular noise exposure (weapons, vehicles, aircraft, generators)</span></label>
+          <label class="check"><input type="checkbox" id="pf-blast" data-bind="profile" data-k="blast" ${p.blast?"checked":""}><span>Blast or concussion exposure</span></label>
+          <label class="check"><input type="checkbox" id="pf-retire" data-bind="profile" data-k="retiring" ${p.retiring?"checked":""}><span>Retiring (20+ years or medical)</span></label>
+        </div>
+        <div class="field wide" style="grid-column:1 / -1"><span class="label">Deployments · ${f.count} entered${f.pact?" · PACT covered":""}${f.gulf?" · Gulf War covered":""}</span>
+          <div class="deps">${deps}</div>
+          <div><button class="btn ghost sm" data-act="dep-add">Add deployment</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-head" style="margin-bottom:12px"><h2>The clock</h2></div>
+      <div class="timeline">${ms.join("")}</div>
+    </div>
+
+    <div class="sec-head"><h2>The plays</h2><p class="muted">Mark each one as you go. Dates count back from your separation date.</p></div>
+    ${savedHtml}
+    ${playsHtml}
+  </div>`;
+}
+function playRow(pl,k){
+  const st = state.plays[pl.id] || "";
+  let dueTxt = "", hot = false;
+  if (pl.due!==null && k.sep){
+    const d = addD(k.sep, pl.due); const left = diffD(d, today0());
+    dueTxt = (pl.due<0 ? "By " : "") + fmt(d) + `<br>${left>=0 ? left+" days left" : "passed"}`;
+    hot = left >= 0 && left <= 30 && st!=="done";
+  } else if (pl.due!==null){ dueTxt = Math.abs(pl.due)+" days before sep."; }
+  return `<div class="play ${st==="done"?"done":""}">
+    <div class="status"><div class="seg" role="group" aria-label="Status">
+      <button class="${!st?"on":""}" data-act="play" data-id="${pl.id}" data-v="">To do</button>
+      <button class="${st==="doing"?"on":""}" data-act="play" data-id="${pl.id}" data-v="doing">Doing</button>
+      <button class="${st==="done"?"on done":""}" data-act="play" data-id="${pl.id}" data-v="done">Done</button>
+    </div>${pl.impact==="high"?'<span class="pill sig" style="align-self:flex-start">High impact</span>':''}</div>
+    <div>
+      <h4>${esc(pl.title)}</h4>
+      <p class="why">${esc(pl.why)}</p>
+      <details><summary>How to run it</summary><ol>${pl.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>
+      ${pl.forms.length?`<div class="forms">${pl.forms.map(f=>`<span class="form-tag">${esc(f)}</span>`).join("")}</div>`:""}</details>
+    </div>
+    <div class="due ${hot?"hot":""}">${dueTxt}</div>
+  </div>`;
+}
+function savedPlays(){
+  const out = [];
+  scoutItems.forEach(i=>{ if (state.scout[i.id]==="saved") out.push({id:i.id, title:i.title, action:i.action, src:"Scout"}); });
+  (state.grok.plays||[]).forEach(g=>{ if (state.scout[g.id]==="saved") out.push({id:g.id, title:g.title, action:g.action, src:"GrokBot"}); });
+  return out;
+}
+
+/* ---------- CLAIMS ---------- */
+function viewClaims(){
+  const t = totals(); const p = state.profile;
+  const rows = t.scored.map(({c,s})=>`<tr>
+      <td><span class="cname">${esc(condName(c))}<small>${esc(c.custom ? (c.custom.dc||"Custom") : LIBMAP[c.lib].dc)}${c.side?" · "+esc(sideLabel(c.side)):""}</small></span></td>
+      <td class="n">${c.target}%</td>
+      <td><div class="meter lv-${level(s.sc)}"><i><b style="width:${s.sc}%"></b></i><span>${s.sc}</span></div></td>
+      <td><div class="meter lv-${level(s.rt)}"><i><b style="width:${s.rt}%"></b></i><span>${s.rt}</span></div></td>
+      <td class="n">${s.connected ? s.likely+"%" : "—"}</td>
+      <td style="min-width:240px;font-size:13.5px">${esc(s.next)}</td>
+    </tr>`).join("");
+  const have = new Set(state.conditions.map(c=>c.lib));
+  const sysGroups = {};
+  LIB.forEach(L=>{ (sysGroups[L.sys] = sysGroups[L.sys]||[]).push(L); });
+  const options = Object.entries(sysGroups).map(([sys,list])=>`<optgroup label="${esc(sys)}">${list.map(L=>`<option value="${L.id}">${esc(L.name)}${have.has(L.id)&&!L.limb?" (added)":""}</option>`).join("")}</optgroup>`).join("");
+
+  return `<div class="section">
+    <div class="sec-head"><h2>Confidence report</h2>
+      <p class="muted"><b>Service connection</b> asks whether VA will link it to service. <b>Rating</b> asks whether the evidence supports the percent you picked. Both are evidence scores, not promises.</p></div>
+    ${state.conditions.length ? `<div class="report-wrap"><table class="report">
+      <thead><tr><th>Condition</th><th>Target</th><th>Service connection</th><th>Rating</th><th>Likely</th><th>Next best move</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>` : `<div class="empty">No conditions yet. Add the ones you actually have below.</div>`}
+
+    <div class="panel">
+      <div class="sub-h">Add a condition</div>
+      <div class="add-row">
+        <select class="inline" id="add-cond" aria-label="Condition to add"><option value="">Pick from the rating schedule</option>${options}<option value="__custom">Something else (type it)</option></select>
+        <button class="btn" data-act="add-cond">Add</button>
+      </div>
+      <div class="add-row" id="custom-row" style="margin-top:8px" hidden>
+        <input class="inline" id="custom-name" placeholder="Condition name, e.g. Hemorrhoids" style="background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:8px 10px;width:100%">
+        <span></span>
+      </div>
+    </div>
+
+    <div class="sec-head"><h2>Claim cards</h2><p class="muted">Tap a card. Pick the tier that matches your real symptoms, check off the evidence you have, and fill in your lines.</p></div>
+    <div class="cards">${t.scored.map(({c,s})=>condCard(c,s,p)).join("")}</div>
+  </div>`;
+}
+function condCard(c,s,p){
+  const L = LIBMAP[c.lib]; const open = openCards.has(c.uid);
+  const tiers = c.custom ? [0,10,20,30,40,50,60,70,80,90,100].map(n=>[n,"Custom target"]) : L.tiers;
+  const lv = level(Math.min(s.sc, s.rt));
+  const head = `<div class="card-head" data-act="toggle" data-uid="${c.uid}" role="button" tabindex="0" aria-expanded="${open}">
+      <div><h3>${esc(condName(c))}</h3>
+        <div class="meta"><span class="mono note">${esc(c.custom ? "Custom" : L.dc)}</span>${c.side?`<span class="note">${esc(sideLabel(c.side))}</span>`:""}
+        <span class="pill ${lv}">${levelWord(Math.min(s.sc,s.rt))}</span>${s.pres && (s.pres.legal||s.pres.inserv) ? `<span class="pill od">${esc(s.pres.label)}</span>`:""}</div></div>
+      <div class="scores">
+        <div class="score"><b class="num" style="color:var(--signal)">${c.target}%</b><span>Target</span></div>
+        <div class="score"><b class="num">${s.sc}</b><span>Svc conn.</span></div>
+        <div class="score"><b class="num">${s.rt}</b><span>Rating</span></div>
+        <span class="chev" aria-hidden="true">›</span>
+      </div></div>`;
+  if (!open) return `<div class="card">${head}</div>`;
+  const tierHtml = tiers.map(([pct,d])=>`<label class="tier ${pct===c.target?"sel":""}"><input type="radio" name="tier-${c.uid}" id="tier-${c.uid}-${pct}" data-cond="${c.uid}" data-f="target" value="${pct}" ${pct===c.target?"checked":""}><span class="p num">${pct}%</span><span class="d">${esc(d)}</span></label>`).join("");
+  const ev = c.ev||{};
+  const lay = L && L.lay;
+  const chk = (list) => list.map(([k,lab])=>`<label class="check"><input type="checkbox" id="ev-${c.uid}-${k}" data-cond="${c.uid}" data-f="ev" data-k="${k}" ${ev[k]?"checked":""}><span>${esc(lab)}${k==="dx"&&lay?' <span class="note">(not required: you can report tinnitus yourself)</span>':""}</span></label>`).join("");
+  const sec = L && L.sec.length ? `<div class="blk"><div class="sub-h">Secondaries to look at</div><div class="sec-links">${L.sec.map(id=>LIBMAP[id]?`<button class="link-btn" data-act="add-lib" data-lib="${id}">+ ${esc(LIBMAP[id].name)}</button>`:"").join("")}</div></div>` : "";
+  const sayHtml = L && L.say.length ? `<div class="blk"><div class="sub-h">Say it right · fill each blank with your real facts</div><div class="say">${L.say.map(x=>`<p>${esc(x)}</p>`).join("")}</div>
+      <div><button class="btn ghost sm" data-act="template" data-uid="${c.uid}">Copy lines into my notes</button></div></div>` : "";
+  return `<div class="card open">${head}
+    <div class="card-body">
+      <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+        <div class="next"><span class="label">Next move</span><span>${esc(s.next)}</span></div>
+        ${s.pres && s.pres.text!==s.next ? `<div class="pres"><b>${esc(s.pres.label)}.</b> ${esc(s.pres.text)}</div>`:""}
+        <div class="blk"><div class="sub-h">Pick the tier that matches your real symptoms${c.custom?"":" · "+esc(L.cfr)}</div><div class="tiers">${tierHtml}</div></div>
+        ${L && L.note ? `<p class="note">${esc(L.note)}</p>`:""}
+        ${L ? `<div class="blk"><div class="sub-h">Examiner measures</div><p style="font-size:14px">${esc(L.measures)}</p></div>`:""}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+        <div class="blk"><div class="sub-h">Service connection evidence · ${s.sc}/100</div>${chk(EV_SC)}</div>
+        <div class="blk"><div class="sub-h">Rating evidence · ${s.rt}/100</div>${chk(EV_RT)}</div>
+        ${L && L.evidence.length ? `<div class="blk"><div class="sub-h">Evidence that wins this one</div><ul style="margin:0;padding-left:18px;font-size:14px">${L.evidence.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`:""}
+        ${sayHtml}
+        <label class="field"><span class="sub-h" style="margin:0">My notes and exam lines</span><textarea id="notes-${c.uid}" data-cond="${c.uid}" data-f="notes" placeholder="Your real facts: dates, frequency, worst days, what you can't do.">${esc(c.notes)}</textarea></label>
+        ${c.grokDraft ? `<div class="blk"><div class="sub-h">GrokBot statement draft · check every fact before you use it</div><div class="say" style="border-left-color:var(--signal)"><p style="white-space:pre-wrap">${esc(c.grokDraft)}</p></div></div>`:""}
+        ${L && L.avoid.length ? `<div class="blk"><div class="sub-h">Don't</div><ul style="margin:0;padding-left:18px;font-size:14px">${L.avoid.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`:""}
+        ${sec}
+        <div class="row">
+          <label class="field" style="flex:1;min-width:160px"><span class="sub-h" style="margin:0">Side (for the bilateral factor)</span><select id="side-${c.uid}" data-cond="${c.uid}" data-f="side">${SIDES.map(([v,l])=>`<option value="${v}" ${v===c.side?"selected":""}>${l}</option>`).join("")}</select></label>
+          <button class="btn ghost sm" data-act="remove" data-uid="${c.uid}" style="align-self:flex-end">Remove claim</button>
+        </div>
+      </div>
+    </div></div>`;
+}
+
+/* ---------- SCOUT ---------- */
+function allIntel(){
+  const g = (state.grok.plays||[]).map(x=>Object.assign({src:"GrokBot"}, x));
+  const s = scoutItems.map(x=>Object.assign({src:"Scout"}, x));
+  return s.concat(g).sort((a,b)=>String(b.foundAt||"").localeCompare(String(a.foundAt||"")));
+}
+function viewScout(){
+  const items = allIntel().filter(i=>{
+    const st = state.scout[i.id];
+    if (scoutFilter==="saved") return st==="saved";
+    if (scoutFilter==="dismissed") return st==="dismissed";
+    if (scoutFilter==="grok") return i.src==="GrokBot" && st!=="dismissed";
+    return st!=="dismissed";
+  });
+  const seen = seenAtOpen || "";
+  const metaLine = store.mode!=="db" ? "Open this page in Claude to receive scout reports."
+    : scoutMeta && scoutMeta.lastRun ? `Last sweep ${fmt(new Date(scoutMeta.lastRun))}${scoutMeta.summary?": "+esc(scoutMeta.summary):""}` : "First sweep pending.";
+  const list = items.length ? `<div class="feed">${items.map(i=>{
+    const st = state.scout[i.id]; const url = safeUrl(i.sourceUrl || i.source);
+    const isNew = !st && i.foundAt && (!seen || i.foundAt > seen);
+    const conf = Number(i.confidence);
+    return `<article class="intel ${st==="dismissed"?"dim":""}">
+      <div class="when"><span>${i.foundAt ? fmtShort(new Date(i.foundAt)) : ""}</span><span class="pill ${i.src==="GrokBot"?"sig":"od"}" style="align-self:flex-start">${esc(i.src)}</span>
+        ${i.impact?`<span class="pill ${i.impact==="high"?"sig":i.impact==="medium"?"warn":"od"}" style="align-self:flex-start">${esc(i.impact)}</span>`:""}</div>
+      <div style="min-width:0">
+        <h4>${isNew?'<span class="new-dot" aria-label="New"></span>':""}${esc(i.title)}</h4>
+        ${i.summary||i.why?`<p class="muted" style="margin-top:4px;max-width:72ch">${esc(i.summary||i.why)}</p>`:""}
+        ${i.action?`<p class="act"><b>Do</b>${esc(i.action)}</p>`:""}
+        <div class="foot">
+          ${isFinite(conf) && i.confidence!==undefined ? `<span class="conf"><span class="meter lv-${level(conf)}" style="display:inline-flex;min-width:140px;vertical-align:middle"><i><b style="width:${conf}%"></b></i><span>${conf}</span></span> confidence${i.confidenceWhy||i.confidence_why?" · "+esc(i.confidenceWhy||i.confidence_why):""}</span>`:""}
+          ${i.status?`<span class="pill od">${esc(i.status)}</span>`:""}
+          ${url?`<a href="${esc(url)}" target="_blank" rel="noopener">Source</a>`:""}
+        </div>
+        <div class="row" style="margin-top:10px">
+          ${st==="saved" ? `<button class="btn sm" data-act="unsave" data-id="${esc(i.id)}">In my plan ✓</button>` : `<button class="btn sm" data-act="save" data-id="${esc(i.id)}">Add to my plan</button>`}
+          ${st==="dismissed" ? `<button class="btn ghost sm" data-act="unsave" data-id="${esc(i.id)}">Restore</button>` : `<button class="btn ghost sm" data-act="dismiss" data-id="${esc(i.id)}">Not for me</button>`}
+          ${i.src==="GrokBot" ? `<button class="btn ghost sm" data-act="grok-del" data-id="${esc(i.id)}">Delete</button>`:""}
+        </div>
+      </div></article>`;}).join("")}</div>`
+    : `<div class="empty">${scoutFilter==="all" ? `Nothing yet. The scout sweeps VA.gov, the Federal Register, VA news, and VSO updates every morning and drops new plays here, each with a confidence score and source. You can also run a <button class="link-btn" data-act="tab" data-tab="grok">GrokBot scout mission</button>.` : "Nothing in this filter."}</div>`;
+  return `<div class="section">
+    <div class="sec-head"><div><h2>Scout</h2><p class="muted" style="margin-top:6px">${metaLine}</p></div>
+      <div class="filters">${[["all","All"],["saved","In my plan"],["grok","GrokBot"],["dismissed","Not for me"]].map(([k,l])=>`<button class="fbtn ${scoutFilter===k?"on":""}" data-act="filter" data-f="${k}">${l}</button>`).join("")}</div></div>
+    ${list}
+  </div>`;
+}
+let seenTimer = null;
+function markScoutSeen(){
+  const latest = scoutItems.reduce((m,i)=>(i.foundAt||"") > m ? i.foundAt : m, "");
+  if (!latest || latest <= (state.scoutSeen||"")) return;
+  clearTimeout(seenTimer);
+  seenTimer = setTimeout(()=>{ state.scoutSeen = latest; changed({silent:true}); renderScoutBadge(); }, 4000);
+}
+
+/* ---------- PREP ---------- */
+const RULES = [
+["Describe your worst days, and how often they come","The examiner fills in a questionnaire (DBQ) about frequency and severity. Give the real range: typical day, bad day, how many bad days a month."],
+["Report flare-ups even if you're fine today","Examiners must estimate how much you lose during flare-ups (DeLuca, Sharp v. Shulkin). Say how often, how long, and what you can't do during one."],
+["Stop range-of-motion tests where pain starts","Move until it hurts, then say \"pain starts here.\" Pushing through to look tough records motion you don't really have."],
+["Say what medication you took today","Tell the examiner what you took and how you are without it. Ratings generally can't be lowered for relief from medication unless the criteria say so."],
+["Give work and home impact in numbers","Days missed, duties changed, things you've stopped doing. \"I left work early 6 times in 3 months\" beats \"it's bad.\""],
+["Tell the truth, all of it","Don't minimize out of habit and don't exaggerate. Mental health exams include validity checks, and inconsistency with your records damages every claim, not just one."],
+["Bring your kit","Symptom log, medication list, a one-page list of conditions, and copies of key records with tabs."],
+["Debrief right after","Write down how long it lasted and what was measured. If it was inadequate, that's grounds to challenge it. You can request the report with VA Form 20-10206."],
+];
+function viewPrep(){
+  const items = state.conditions.map(c=>{
+    const L = LIBMAP[c.lib];
+    const lines = c.notes ? c.notes : (L && L.say.length ? L.say.join("\n") : "Add your lines in the claim card.");
+    return `<div class="cheat-item"><div class="row" style="justify-content:space-between"><h4>${esc(condName(c))}</h4><span class="pill sig">${c.target}% target</span></div>
+      ${L?`<p class="note"><b>Examiner measures:</b> ${esc(L.measures)}</p>`:""}
+      <pre>${esc(lines)}</pre>${c.notes?"":`<p class="note" style="margin-top:6px">Template lines. Fill in your real facts in the claim card.</p>`}</div>`;
+  }).join("");
+  const qs = (state.grok.questions||[]);
+  const qHtml = qs.length ? `<div class="panel"><div class="sub-h">GrokBot mock exam · ${qs.length} questions</div>
+     <div class="rules">${qs.map(q=>`<div class="rule"><div><h4>${esc(q.question)}</h4><p>${esc(q.condition?("For "+(LIBMAP[q.condition]?.name||q.condition)+". "):"")}${esc(q.tip||"")}</p></div></div>`).join("")}</div></div>` : "";
+  return `<div class="section">
+    <div class="grid2">
+      <div class="panel"><div class="sec-head" style="margin-bottom:8px"><h2>Exam rules</h2></div>
+        <p class="note" style="margin-bottom:6px">The goal is a complete, accurate record. That's what gets you the rating you've earned.</p>
+        <div class="rules">${RULES.map(([h,p])=>`<div class="rule"><div><h4>${esc(h)}</h4><p>${esc(p)}</p></div></div>`).join("")}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+        <div class="panel"><div class="sub-h">Mental health exam</div>
+          <ul style="margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:4px">
+            <li>Walk through a typical week, then your worst week this year.</li>
+            <li>Name the people affected: spouse, kids, coworkers. Bring their statements.</li>
+            <li>Sleep: hours, nightmares, how often you wake.</li>
+            <li>Panic, anger, isolation, hygiene, memory: give how often.</li>
+            <li>If you've had thoughts of suicide, say so. It's a rating criterion and it gets you help. Crisis Line: 988, press 1.</li>
+          </ul></div>
+        <div class="panel"><div class="sub-h">Symptom log format</div>
+          <pre class="code">Date | Condition | Severity 1–10 | How long
+What I couldn't do | Meds taken | Work impact
+Oct 19 | Back | 7 | 2 days
+Couldn't lift kid, left work at 1300 | 800mg ibuprofen | -4 hrs</pre></div>
+      </div>
+    </div>
+    ${qHtml}
+    <div class="sec-head"><h2>Your cheat sheet</h2><p class="muted">One card per claim, built from your notes.</p></div>
+    <div class="cheat">${items || `<div class="empty">Add claims to build your cheat sheet.</div>`}</div>
+  </div>`;
+}
+
+/* ---------- GROK ---------- */
+function caseFile(){
+  const p = state.profile; const f = deployFlags(p); const t = totals();
+  return {
+    generated: new Date().toISOString().slice(0,10),
+    service:{branch:p.branch, separation_date:p.sep||null, retiring:!!p.retiring, combat_award:!!p.combat, noise_exposure:!!p.noise, blast_exposure:!!p.blast,
+      deployments:p.deployments.filter(d=>d.loc).map(d=>({location:d.loc, year:d.year||null, pact_covered:PACT_LOCS.includes(d.loc), gulf_war_covered:GULF_LOCS.includes(d.loc)})),
+      pact_covered:f.pact, gulf_war_covered:f.gulf},
+    projected:{target_combined:t.T.rating, evidence_supports_today:t.L.rating},
+    conditions:t.scored.map(({c,s})=>({id:c.custom?c.uid:c.lib, name:condName(c), diagnostic_code:c.custom?null:LIBMAP[c.lib].dc, side:c.side||null, target_percent:c.target,
+      service_connection_confidence:s.sc, rating_confidence:s.rt, likely_percent:s.connected?s.likely:0,
+      evidence_on_hand:Object.keys(c.ev||{}).filter(k=>c.ev[k]), presumption:s.pres&&(s.pres.legal||s.pres.inserv)?s.pres.label:null, veteran_notes:c.notes||null})),
+    plays_done:Object.keys(state.plays).filter(k=>state.plays[k]==="done"),
+  };
+}
+/* withCase=false leaves the case file out: Run mission sends it as its own case_file argument. */
+function grokBrief(withCase = true){
+  const m = MISSIONS.find(x=>x.id===mission) || MISSIONS[0];
+  return `You are GrokBot, a VA disability claim strategist working for a U.S. veteran with ${Math.max(deployFlags(state.profile).count,0) || "multiple"} deployments.
+
+MISSION: ${m.text}
+
+GROUND RULES
+- Use 38 CFR Part 4 (VA Schedule for Rating Disabilities) and current VA rules. Use your live X and web search for anything that changed recently, and cite a source URL for every factual claim.
+- Help the veteran describe REAL symptoms completely and accurately. Never suggest exaggerating, inventing, or coaching symptoms they don't have. Accuracy protects the claim.
+- Prefer free accredited help (VSOs) over paid consultants.
+- Give every play a confidence score from 0 to 100 and say why.
+
+${withCase ? `CASE FILE
+${JSON.stringify(caseFile(), null, 2)}
+
+` : ""}REPLY FORMAT
+Reply with ONLY one JSON object, no prose before or after:
+{
+  "plays": [{"title": "", "why": "", "action": "", "impact": "high|medium|low", "confidence": 0, "confidence_why": "", "applies_to": ["condition id"], "source": "https://..."}],
+  "statements": [{"condition": "condition id", "draft": "first-person draft using only facts from the case file; [FILL IN] for gaps"}],
+  "exam_questions": [{"condition": "condition id", "question": "", "tip": ""}]
+}
+Leave an array empty if the mission doesn't call for it.`;
+}
+function grokMsgHtml(where){
+  if (!grokMsg || grokMsg.where!==where) return "";
+  return `<div class="msg ${grokMsg.ok?"ok":"err"}" role="status">${esc(grokMsg.text)}${grokMsg.scout?` <button class="link-btn" data-act="tab" data-tab="scout">Open Scout</button>`:""}</div>`;
+}
+function viewGrok(){
+  const h = state.grok.history||[];
+  const live = !!grokMcp;
+  return `<div class="section">
+    <div class="sec-head"><div><h2>GrokBot connector</h2><p class="muted" style="margin-top:6px;max-width:68ch">Hand your case to Grok, let it run live X and web search, and pull its plays, statement drafts, and mock exam questions straight back into your playbook. ${live
+      ? "Run mission sends the brief and case file (no name) to xAI through the grokbot server on this computer, using your own xAI key. Copy and paste still works if you'd rather choose what Grok sees."
+      : "Copying sends nothing anywhere: you choose what to paste into Grok, and your name isn't in the file."}</p></div></div>
+    <div class="steps">
+      <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+        <div class="row"><span class="step-n">1</span><div><b>${live?"Pick a mission and run it":"Pick a mission and copy the brief"}</b><p class="note">${live?"Grok's plays land in Scout when it's done. Or copy the brief and paste it into Grok yourself.":"Paste it into Grok (grok.com, the X app, or a Grok project)."}</p></div></div>
+        <div class="missions">${MISSIONS.map(m=>`<label class="mission ${m.id===mission?"sel":""}"><input type="radio" name="mission" id="mission-${m.id}" data-act-change="mission" value="${m.id}" ${m.id===mission?"checked":""}><div><b>${esc(m.title)}</b><span>${esc(m.desc)}</span></div></label>`).join("")}</div>
+        <textarea class="brief" id="grok-brief" readonly aria-label="GrokBot brief">${esc(grokBrief())}</textarea>
+        <div class="row">${live?`<button class="btn" id="grok-run-btn" data-act="grok-run" ${grokBusy?"disabled":""}>${grokBusy?"Running…":"Run mission"}</button>`:""}<button class="btn ${live?"ghost":""}" data-act="grok-copy">Copy brief</button>${downloads?`<button class="btn ghost" data-act="grok-file">Save case file (.json)</button>`:""}<span class="note" id="copy-note"></span></div>
+        <div id="grok-run-msg" style="display:contents">${grokMsgHtml("run")}</div>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column;gap:12px">
+        <div class="row"><span class="step-n">2</span><div><b>${live?"Or paste Grok's reply":"Paste Grok's reply"}</b><p class="note">The whole reply is fine. The importer finds the JSON inside it.</p></div></div>
+        <textarea class="paste" id="grok-paste" placeholder='{"plays": [...], "statements": [...], "exam_questions": [...]}' aria-label="Grok reply"></textarea>
+        <div class="row"><button class="btn" data-act="grok-import">Import intel</button></div>
+        ${grokMsgHtml("paste")}
+        <div class="blk"><div class="sub-h">Where it lands</div>
+          <ul style="margin:0;padding-left:18px;font-size:14px"><li>Plays go to the Scout feed, tagged GrokBot, with Grok's confidence score.</li><li>Statement drafts go into each claim card. Check every fact before you use one.</li><li>Exam questions go to C&amp;P exam prep.</li></ul></div>
+        ${h.length?`<div class="blk"><div class="sub-h">Import history</div><div class="history">${h.slice(-6).reverse().map(x=>`<div><span>${fmt(new Date(x.at))} · ${esc((MISSIONS.find(m=>m.id===x.mission)||{}).title||"Import")}</span><span class="mono note">${x.plays}p · ${x.statements}s · ${x.questions}q</span></div>`).join("")}</div></div>`:""}
+      </div>
+    </div>
+  </div>`;
+}
+function extractJSON(text){
+  const t = String(text||"").replace(/```(?:json)?/gi,"").trim();
+  const start = t.indexOf("{"); if (start<0) return null;
+  let depth=0, inStr=false, escp=false;
+  for (let i=start;i<t.length;i++){
+    const ch = t[i];
+    if (inStr){ if(escp) escp=false; else if(ch==="\\") escp=true; else if(ch==="\"") inStr=false; continue; }
+    if (ch==="\"") inStr=true; else if (ch==="{") depth++; else if (ch==="}"){ depth--; if(!depth){ try{ return JSON.parse(t.slice(start,i+1)); }catch(e){ return null; } } }
+  }
+  return null;
+}
+const clip = (s,n) => String(s??"").slice(0,n);
+/* src omitted: read the paste box. src given: a reply from Run mission (object or text). */
+function importGrok(src, missionId = mission){
+  const where = src===undefined ? "paste" : "run";
+  const d = where==="paste" ? extractJSON(document.getElementById("grok-paste").value) : (typeof src==="string" ? extractJSON(src) : src);
+  if (!d || typeof d!=="object"){
+    grokMsg = {ok:false, where, text: where==="paste" ? "Couldn't find valid JSON in that reply. Ask Grok to answer with only the JSON object, then paste again." : "GrokBot answered, but not with the JSON the playbook needs. Run it again, or use copy and paste."};
+    if (tab==="grok") renderView(); return;
+  }
+  const now = new Date().toISOString();
+  const plays = (Array.isArray(d.plays)?d.plays:[]).slice(0,40).filter(x=>x&&x.title).map(x=>({
+    id:"g"+Math.random().toString(36).slice(2,9), title:clip(x.title,200), why:clip(x.why,800), action:clip(x.action,800),
+    impact:["high","medium","low"].includes(x.impact)?x.impact:"medium", confidence:Math.max(0,Math.min(100,Number(x.confidence)||0)),
+    confidence_why:clip(x.confidence_why,300), applies_to:(Array.isArray(x.applies_to)?x.applies_to:[]).slice(0,10).map(s=>clip(s,40)),
+    source:safeUrl(x.source)||"", foundAt:now}));
+  let stmts = 0;
+  (Array.isArray(d.statements)?d.statements:[]).forEach(s=>{
+    if (!s || !s.draft) return;
+    const c = state.conditions.find(c=>c.lib===s.condition || c.uid===s.condition || condName(c).toLowerCase()===String(s.condition||"").toLowerCase());
+    if (c){ c.grokDraft = clip(s.draft,4000); stmts++; }
+  });
+  const qs = (Array.isArray(d.exam_questions)?d.exam_questions:[]).slice(0,60).filter(q=>q&&q.question).map(q=>({condition:clip(q.condition,40), question:clip(q.question,400), tip:clip(q.tip,500)}));
+  state.grok.plays = (state.grok.plays||[]).concat(plays).slice(-80);
+  if (qs.length) state.grok.questions = qs;
+  state.grok.history = (state.grok.history||[]).concat([{at:now, mission:missionId, plays:plays.length, statements:stmts, questions:qs.length}]).slice(-20);
+  grokMsg = {ok:true, where, scout:plays.length>0, text:`Imported ${plays.length} plays, ${stmts} statement drafts, ${qs.length} exam questions.`};
+  if (where==="paste") document.getElementById("grok-paste").value = "";
+  changed({full:!typingInView()});
+}
+
+function grokRunError(e){
+  const code = e && e.code;
+  if (code==="server_not_connected") return "GrokBot's local server isn't connected here. Run missions from the Claude desktop app with the grokbot server added to its MCP config, or use copy and paste.";
+  if (code==="cancelled") return "Run cancelled in the Claude app. Nothing was sent to Grok.";
+  if (code==="approval_required") return "Running a mission needs your approval in the Claude app. Click Run mission again and allow it.";
+  if (code==="not_in_manifest") return "GrokBot is turned off for this page. Turn it back on from the artifact's Permissions menu, then run again.";
+  if (code==="blocked_by_policy") return "Your organization's policy blocks GrokBot here. Use copy and paste instead.";
+  if (code==="tool_error") return "GrokBot reported a problem: " + clip(e.message, 400);
+  if (code==="server_unavailable" || code==="upstream_error") return "No answer from GrokBot in time. Grok may still be searching, or xAI is busy. Try again in a minute, or use copy and paste.";
+  if (code==="not_granted" || code==="capability_disabled" || code==="capability_removed"){ grokMcp = null; return "Live runs aren't available in this view. Use copy and paste."; }
+  return "GrokBot couldn't run" + (code ? " ("+code+")" : "") + ". Try again, or use copy and paste.";
+}
+async function runGrok(){
+  if (!grokMcp || grokBusy) return;
+  const missionId = mission;
+  grokBusy = true;
+  grokMsg = {ok:true, where:"run", text:"GrokBot is on it. Live X and web search can take a minute or two; you can keep working in other tabs."};
+  renderView();
+  try{
+    const res = await grokMcp.callTool(GROK_SERVER, "ask_grok", {mission:grokBrief(false), case_file:caseFile()}, {cache:false});
+    grokBusy = false;
+    importGrok(res && res.payload!==undefined ? res.payload : (res&&res.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n"), missionId);
+  }catch(e){
+    grokBusy = false;
+    grokMsg = {ok:false, where:"run", text:grokRunError(e)};
+    if (tab==="grok" && !typingInView()) renderView();
+  }
+  if (tab==="grok" && typingInView()) refreshGrokRun();
+}
+/* Update the run button and message in place, so a finished run doesn't wipe what the viewer is typing. */
+function refreshGrokRun(){
+  const b = document.getElementById("grok-run-btn");
+  if (b){ b.disabled = grokBusy; b.textContent = grokBusy ? "Running…" : "Run mission"; }
+  const m = document.getElementById("grok-run-msg");
+  if (m) m.innerHTML = grokMsgHtml("run");
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+document.addEventListener("click", async e=>{
+  const el = e.target.closest("[data-act]"); if (!el) return;
+  const act = el.dataset.act;
+  if (act==="tab"){ tab = el.dataset.tab; try{ localStorage.setItem("vp-tab",tab); }catch(_){} renderTabs(); renderView(); renderScoutBadge(); const top = document.getElementById("tabs").getBoundingClientRect().top + window.scrollY - 8; if (window.scrollY > top) window.scrollTo({top, behavior:"smooth"}); return; }
+  if (act==="play"){ const v = el.dataset.v; if (v) state.plays[el.dataset.id]=v; else delete state.plays[el.dataset.id]; changed({full:true}); return; }
+  if (act==="dep-add"){ state.profile.deployments.push({loc:"",year:""}); changed({full:true}); return; }
+  if (act==="dep-remove"){ state.profile.deployments.splice(+el.dataset.i,1); changed({full:true}); return; }
+  if (act==="toggle"){ const u = el.dataset.uid; openCards.has(u)?openCards.delete(u):openCards.add(u); renderView(); return; }
+  if (act==="remove"){ state.conditions = state.conditions.filter(c=>c.uid!==el.dataset.uid); changed({full:true}); return; }
+  if (act==="add-cond" || act==="add-lib"){
+    let id = act==="add-lib" ? el.dataset.lib : document.getElementById("add-cond").value;
+    if (!id) return;
+    let c;
+    if (id==="__custom"){
+      const row = document.getElementById("custom-row"); const nm = document.getElementById("custom-name");
+      if (row.hidden){ row.hidden = false; nm.focus(); return; }
+      if (!nm.value.trim()){ nm.focus(); return; }
+      c = {uid:uidGen(), lib:"custom", side:"", target:10, ev:{}, notes:"", custom:{name:clip(nm.value.trim(),80)}};
+    } else {
+      const L = LIBMAP[id]; if (!L) return;
+      if (!L.limb && state.conditions.some(x=>x.lib===id)){ const ex = state.conditions.find(x=>x.lib===id); openCards.add(ex.uid); tab="claims"; renderTabs(); renderView(); return; }
+      c = makeCond(id, L.tiers[0][0]);
+    }
+    state.conditions.push(c); openCards.add(c.uid); tab="claims"; renderTabs(); changed({full:true});
+    setTimeout(()=>{ const n = document.querySelector(`[data-uid="${c.uid}"]`); if(n) n.scrollIntoView({behavior:"smooth",block:"start"}); }, 50);
+    return;
+  }
+  if (act==="template"){ const c = state.conditions.find(c=>c.uid===el.dataset.uid); const L = LIBMAP[c.lib]; if (!L) return; c.notes = (c.notes ? c.notes+"\n" : "") + L.say.join("\n"); changed({full:true}); return; }
+  if (act==="filter"){ scoutFilter = el.dataset.f; renderView(); return; }
+  if (act==="save"){ state.scout[el.dataset.id]="saved"; changed({full:true}); return; }
+  if (act==="dismiss"){ state.scout[el.dataset.id]="dismissed"; changed({full:true}); return; }
+  if (act==="unsave"){ delete state.scout[el.dataset.id]; changed({full:true}); return; }
+  if (act==="grok-del"){ state.grok.plays = state.grok.plays.filter(g=>g.id!==el.dataset.id); delete state.scout[el.dataset.id]; changed({full:true}); return; }
+  if (act==="grok-copy"){
+    const ta = document.getElementById("grok-brief"); const note = document.getElementById("copy-note");
+    try{ await navigator.clipboard.writeText(ta.value); note.textContent = "Copied. Paste it into Grok."; }
+    catch(_){ ta.focus(); ta.select(); note.textContent = "Selected. Press Cmd/Ctrl+C to copy."; }
+    return;
+  }
+  if (act==="grok-file"){
+    if (!downloads) return;
+    try{ await downloads.save({filename:"veterans-playbook-case.json", data:JSON.stringify(caseFile(),null,2)}); }catch(_){}
+    return;
+  }
+  if (act==="grok-import"){ importGrok(); return; }
+  if (act==="grok-run"){ runGrok(); return; }
+});
+document.addEventListener("keydown", e=>{
+  if ((e.key==="Enter"||e.key===" ") && e.target.matches(".card-head")){ e.preventDefault(); e.target.click(); }
+});
+document.addEventListener("change", e=>{
+  const el = e.target;
+  if (el.id==="add-cond"){ document.getElementById("custom-row").hidden = el.value!=="__custom"; return; }
+  if (el.dataset.actChange==="mission"){ mission = el.value; renderView(); return; }
+  if (el.dataset.bind==="profile"){ state.profile[el.dataset.k] = el.type==="checkbox" ? el.checked : el.value; changed({full:true}); return; }
+  if (el.dataset.bind==="dep" && el.tagName==="SELECT"){ state.profile.deployments[+el.dataset.i][el.dataset.k] = el.value; changed({full:true}); return; }
+  if (el.dataset.cond){
+    const c = state.conditions.find(c=>c.uid===el.dataset.cond); if (!c) return;
+    const f = el.dataset.f;
+    if (f==="target"){ c.target = Number(el.value); changed({full:true}); }
+    else if (f==="ev"){ c.ev = c.ev||{}; if (el.checked) c.ev[el.dataset.k]=true; else delete c.ev[el.dataset.k]; changed({full:true}); }
+    else if (f==="side"){ c.side = el.value; changed({full:true}); }
+  }
+});
+document.addEventListener("input", e=>{
+  const el = e.target;
+  if (el.dataset.bind==="dep" && el.tagName==="INPUT"){ state.profile.deployments[+el.dataset.i][el.dataset.k] = el.value.slice(0,12); changed(); return; }
+  if (el.dataset.cond && el.dataset.f==="notes"){ const c = state.conditions.find(c=>c.uid===el.dataset.cond); if (c){ c.notes = el.value.slice(0,6000); changed(); } }
+});
+
+boot();
+</script>
+</body>
+</html>
